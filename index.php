@@ -5,12 +5,6 @@
  *
  * @package WordPress
  */
- sqdd
- qsd
- 
- qsdqs
- qsdsq
- qsd
 
 /**
  * Tells WordPress to load the WordPress theme and output it.
