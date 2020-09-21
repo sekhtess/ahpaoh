@@ -7,7 +7,9 @@
  */
 
 /**
- * Tells WordPress to load the WordPress theme and output it.
+ * Tells WordPress to l
+ 
+ oad the WordPress theme and output it.
  *
  * @var bool
  */
