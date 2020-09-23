@@ -8,20 +8,19 @@ if(!function_exists('extendthemes_switch_theme')){
 		if ( in_array( $old_theme->template, array( 'colibri-wp', 'colibri', 'one-page-express' ) ) &&
 			! in_array( get_template(), array( 'colibri-wp', 'colibri', 'one-page-express' ) ) ) {
 				
-			extendthemes_show_survey();
+			extendthemes_show_survey($old_theme->stylesheet);
 		}
 	}
 }
 
 if(!function_exists('extendthemes_show_survey')){
-	function extendthemes_show_survey() {
+	function extendthemes_show_survey($theme) {
 		
-		add_action('admin_footer', function () { 
+		add_action('admin_footer', function () use ($theme) { 
 			add_thickbox();	
 		?>
 		<div id="colibri-survey-modal" style="display:none;">
 			<div class="colibri-survey">
-				
 				<div class="header">
 					<img src="https://colibriwp.com/assets/colibri-logo.svg" class="logo">
 					<div class="title">
@@ -32,7 +31,7 @@ if(!function_exists('extendthemes_show_survey')){
 				
 				<div class="content">
 					
-					<iframe id="survey_iframe" src="https://colibriwp.com/survey/exit/" width="100%" height="100%" outline=0">
+					<iframe id="survey_iframe" src="" width="100%" height="100%" outline=0">
 						
 					</iframe>
 					
@@ -40,7 +39,7 @@ if(!function_exists('extendthemes_show_survey')){
 				
 				<div class="footer">
 					<a href="#" class="skip-link" onclick="colibri_survey_close()"><?php _e('Skip', 'colibri-page-builder');?></a>
-					<a href="#" class="button button-primary"  onclick="colibri_survey_submit()"><?php _e('Submit', 'colibri-page-builder');?></a>
+					<button class="button button-primary" onclick="colibri_survey_submit(this)"><?php _e('Submit', 'colibri-page-builder');?></button>
 				</div>
 			</div>
 		</div>
@@ -153,26 +152,30 @@ if(!function_exists('extendthemes_show_survey')){
 			
 			if (survey_submitted) {
 				setTimeout(function () {
-					tb_remove();
+					colibri_survey_close();
+					survey_submitted = false;
 				}, 2000);
 			}
 		
 		});
 		jQuery(window).load(function () {
 			tb_show('', '#TB_inline?KeepThis=true&width=550&height=420&inlineId=colibri-survey-modal&modal=true', false);
+			jQuery("#TB_ajaxContent #survey_iframe").attr("src","https://colibriwp.com/survey/exit/?theme=<?php echo $theme;?>");				   
 			
 			extendthemes_adjust_thick_box_size();
 			jQuery(window).resize(extendthemes_adjust_thick_box_size);
 		});
 				
 		function colibri_survey_close() {
+			jQuery("#survey_iframe").attr("src","");
 			tb_remove();
 		}
 
-		function colibri_survey_submit() {
+		function colibri_survey_submit(element) {
 			var message = {'action' : 'submit'};
 			survey_iframe[0].contentWindow.postMessage(message, "*");
 			survey_submitted = true;
+			element.disabled = true;
 			//tb_remove();
 		}
 		</script>
