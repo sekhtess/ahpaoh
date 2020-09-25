@@ -62,8 +62,8 @@ class DemoImport {
                         array(
                             'defaults' => array(
                                 'debug'       => $debug,
-                                'upgrade_url' => apply_filters( 'colibri_page_builder/upgrade_url', 'https://colibriwp.com/go/upgrade' ),
-                                'try_url'     => apply_filters( 'colibri_page_builder/try_url', 'https://colibriwp.com/go/try' ),
+                                'upgrade_url' => colibri_upgrade_url(),
+                                'try_url'     => colibri_try_url(),
                                 'rest_url'    => rest_url(),
                                 'plugin_url'  => PageBuilder::instance()->rootURL(),
                                 "shapes_url"  => get_template_directory_uri() . '/resources/images/header-shapes/',

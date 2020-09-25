@@ -50,10 +50,16 @@ add_action('rest_api_init', function () {
     register_rest_route('colibri/v1', '/presets', array(
         'methods' => 'POST',
         'callback' => '\ExtendBuilder\wp_colibri_v1_add_preset',
+        'permission_callback' => function () {
+            return current_user_can( 'edit_theme_options' );
+        }
     ));
     register_rest_route('colibri/v1', '/presets/delete', array(
         'methods' => 'POST',
         'callback' => '\ExtendBuilder\wp_colibri_v1_delete_preset',
+        'permission_callback' => function () {
+            return current_user_can( 'edit_theme_options' );
+        }
     ));
 });
 

@@ -253,6 +253,10 @@ add_action( 'init', function () {
 	// remove the filter added by third party plugin 'Colibri alt text' to reduce overhead
 	remove_filter( 'the_content', 'colibri_add_images_alts', 1 );
 	remove_filter( 'colibri_dynamic_content', 'colibri_add_images_alts', 1 );
+	$activate_theme_name = get_option( 'colibriwp_activate_theme_name', 0 );
+	if ( $activate_theme_name === 0 ) {
+		add_option( 'colibriwp_activate_theme_name', get_stylesheet() );
+	}	
 } );
 
 add_filter( 'the_content', 'ExtendBuilder\colibri_add_images_alts' );

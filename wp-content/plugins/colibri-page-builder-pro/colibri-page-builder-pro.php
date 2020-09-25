@@ -6,17 +6,23 @@
  *
  * License: GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
- * Version: 1.0.215-pro
+ * Version: 1.0.219-pro
  * Text Domain: colibri-page-builder-pro
  */
 
-if (!in_array(get_option('template'), array('colibri-wp', 'colibri', 'one-page-express'))) {
+if ( ! in_array( get_option( 'template' ), array( 'colibri-wp', 'colibri', 'one-page-express') ) ) {
+    require_once 'utils/survey.php';
+    require_once 'recommendations/colibri-wp.php';
     return;
 } else {
 	$is_customize_page = ( is_admin() && 'customize.php' == basename( $_SERVER['PHP_SELF'] ) );
-	$theme = isset($_GET['theme']) ? $_GET['theme'] : null;
+	$theme = get_template(); 
+	if (isset($_GET['theme']) && $_GET['theme'] != get_stylesheet()) {
+		$theme = $_GET['theme'];
+	}
+
 	//if is theme preview
-	if($is_customize_page && !!$theme && $theme !== 'colibri-wp' ) {
+	if ($is_customize_page && $theme !== 'colibri-wp') {
 		return;
 	}
 }
@@ -46,7 +52,7 @@ if (!defined("COLIBRI_PAGE_BUILDER_AUTOLOAD")) {
 }
 
 if (!defined("COLIBRI_PAGE_BUILDER_VERSION")) {
-	define("COLIBRI_PAGE_BUILDER_VERSION", "1.0.215-pro");
+	define("COLIBRI_PAGE_BUILDER_VERSION", "1.0.219-pro");
 }
 
 

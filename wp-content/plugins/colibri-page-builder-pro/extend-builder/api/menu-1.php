@@ -23,5 +23,8 @@ add_action('rest_api_init', function () {
     register_rest_route('colibri/v1', '/menus', array(
         'methods'  => 'GET',
         'callback' => '\ExtendBuilder\wp_colibri_v1_get_all_menus',
+        'permission_callback' => function () {
+            return current_user_can( 'edit_theme_options' );
+        }
     ));
 });

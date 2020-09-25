@@ -56,6 +56,7 @@ add_filter( 'upgrader_package_options', function ( $options ) {
 
     return $options;
 } );
+
 function wpmu_plugin_is_suppressed( $suppressor ) {
 
     if ( ! $suppressor ) {
@@ -304,10 +305,10 @@ function colibri_wpmu_get_recommended_plugins() {
 
     foreach ( $plugins as $plugin => $plugin_data ) {
         $data = array(
-            'name'        => $plugin_data['name'],
-            'description' => $plugin_data['description'],
-            'plugin_path' => $plugin_data['free'],
-            'suppressed_by' => array_get_value($plugin_data, 'suppressed_by',false),
+            'name'          => $plugin_data['name'],
+            'description'   => $plugin_data['description'],
+            'plugin_path'   => $plugin_data['free'],
+            'suppressed_by' => array_get_value( $plugin_data, 'suppressed_by', false ),
         );
 
         if ( file_exists( WP_PLUGIN_DIR . "/" . $plugin_data['pro'] ) ) {
@@ -408,6 +409,11 @@ add_action( 'colibri_page_builder/ready', function () {
 add_action( 'admin_notices', function () {
     /** @var PluginsManager $manager */
 
+
+    if ( get_transient( 'colibri_wpmu_forminator_hide_notice' ) ) {
+        return;
+    }
+
     //don't display notice after import
     if ( Regenerate::getGeneratorCallback() === "site_imported_notice" ) {
         return;
@@ -444,23 +450,22 @@ add_action( 'admin_notices', function () {
     if ( $status !== PluginsManager::ACTIVE_PLUGIN ) {
 
         ?>
-        <div class="notice notice-warning is-dismissible">
+        <div class="notice notice-warning is-dismissible wpmu-forminator-recommendation">
             <style>
                 .colibri-wpmu-notice {
                     display: flex;
                     align-items: center;
-                    padding: 4px 0px;
+		    justify-content: space-between;
+                    padding: 4px 20px;
                 }
 
                 .colibri-wpmu-notice-col1 {
                     margin-right: 20px;
-                    flex-grow: 1;
                 }
 
                 .colibri-wpmu-notice-col1 h3 {
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: normal;
-                    margin: 16px 0px;
                 }
 
             </style>
@@ -474,8 +479,28 @@ add_action( 'admin_notices', function () {
                 </div>
             </div>
         </div>
+
         <?php
+
+        add_action( 'admin_footer', function () {
+            ?>
+            <script>
+                jQuery(function ($) {
+                    $(document).on('click', '.wpmu-forminator-recommendation .notice-dismiss', function () {
+                        $.post("<?php echo admin_url( "/admin-ajax.php" ); ?>", {
+                            action: 'colibri_wpmu_forminator_hide_notice'
+                        })
+                    });
+                });
+            </script>
+            <?php
+        } );
     }
+} );
+
+
+add_action( 'wp_ajax_colibri_wpmu_forminator_hide_notice', function () {
+    set_transient( 'colibri_wpmu_forminator_hide_notice', true, WEEK_IN_SECONDS );
 } );
 
 function colibri_wpmu_activate_flag( $plugin_data, $functionName ) {

@@ -20,5 +20,8 @@ add_action('rest_api_init', function () {
     register_rest_route('colibri/v1', '/pages/duplicate', array(
         'methods' => 'POST',
         'callback' => '\ExtendBuilder\wp_colibri_v1_duplicate_page',
+        'permission_callback' => function () {
+            return current_user_can( 'edit_theme_options' );
+        }
     ));
 });

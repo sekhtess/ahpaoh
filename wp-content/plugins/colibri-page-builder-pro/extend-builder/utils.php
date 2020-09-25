@@ -330,6 +330,13 @@ function get_colibri_image( $name ) {
 }
 
 function import_colibri_image( $url ) {
+	$skip_import = apply_filters( 'colibri_api_import_image_skip', false );
+	if($skip_import) {
+		return  array(
+			'colibri-url' => $url,
+			'url'         => $url,
+		);
+	}
     	include_once( ABSPATH . 'wp-admin/includes/image.php' );
 	$name           = basename( $url );
 	$existing_image = get_colibri_image( $name );

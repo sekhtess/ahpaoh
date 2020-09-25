@@ -310,7 +310,9 @@ class ColibriThemeDataImporter {
 
 					$opacity      = intval( $opacity ) / 100;
 					$rgba         = $this->colorToRGB( $value );
+					if (isset($rgba['red'])) {
 					$value        = "rgba({$rgba['red']},{$rgba['green']},{$rgba['blue']}, $opacity)";
+					}
 					$data[ $key ] = $value;
 				}
 			}
