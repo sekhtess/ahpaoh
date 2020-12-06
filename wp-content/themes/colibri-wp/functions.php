@@ -49,3 +49,6 @@ if ( version_compare( phpversion(), COLIBRI_THEME_REQUIRED_PHP_VERSION, '>=' ) )
 } else {
 	add_action( 'admin_notices', 'colibriwp_php_version_notice' );
 }
+remove_action("wp_head", "wp_generator");
+add_filter('login_errors',create_function('$a', "return null;"));
+define('DISALLOW_FILE_EDIT',true);
