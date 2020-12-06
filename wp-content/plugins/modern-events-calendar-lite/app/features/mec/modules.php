@@ -156,6 +156,15 @@ if($this->getPRO())
                                         </span>
                                         </div>
                                     </div>
+                                    <div class="mec-form-row">
+                                        <label class="mec-col-3"><?php _e('Fullscreen Button', 'modern-events-calendar-lite'); ?></label>
+                                        <div class="mec-col-4">
+                                            <label>
+                                                <input type="hidden" name="mec[settings][google_maps_fullscreen_button]" value="0" />
+                                                <input value="1" type="checkbox" name="mec[settings][google_maps_fullscreen_button]" <?php if(isset($settings['google_maps_fullscreen_button']) and $settings['google_maps_fullscreen_button']) echo 'checked="checked"'; ?> /> <?php _e("Enabled", 'modern-events-calendar-lite'); ?>
+                                            </label>
+                                        </div>
+                                    </div>
                                     <?php do_action('mec_map_options_after', $settings); ?>
                                 </div>
                                 <?php endif; ?>
@@ -309,8 +318,15 @@ if($this->getPRO())
                                     <div class="mec-col-4">
                                         <select id="mec_settings_next_event_module_method" name="mec[settings][next_event_module_method]">
                                             <option value="occurrence" <?php echo ((isset($settings['next_event_module_method']) and $settings['next_event_module_method'] == 'occurrence') ? 'selected="selected"' : ''); ?>><?php _e('Next Occurrence of Current Event', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="multiple" <?php echo ((isset($settings['next_event_module_method']) and $settings['next_event_module_method'] == 'multiple') ? 'selected="selected"' : ''); ?>><?php _e('Multiple Occurrences of Current Event', 'modern-events-calendar-lite'); ?></option>
                                             <option value="event" <?php echo ((isset($settings['next_event_module_method']) and $settings['next_event_module_method'] == 'event') ? 'selected="selected"' : ''); ?>><?php _e('Next Occurrence of Other Events', 'modern-events-calendar-lite'); ?></option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row" id="mec_settings_next_event_module_multiple_count_wrapper" style="<?php echo ((isset($settings['next_event_module_method']) and $settings['next_event_module_method'] == 'multiple') ? '' : 'display: none;'); ?>">
+                                    <label class="mec-col-3" for="mec_settings_next_event_module_multiple_count"><?php _e('Count of Events', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-4">
+                                        <input type="number" id="mec_settings_next_event_module_multiple_count" name="mec[settings][next_event_module_multiple_count]" value="<?php echo ((isset($settings['next_event_module_multiple_count']) and trim($settings['next_event_module_multiple_count']) != '') ? $settings['next_event_module_multiple_count'] : '10'); ?>" />
                                     </div>
                                 </div>
                                 <div class="mec-form-row">
@@ -318,49 +334,63 @@ if($this->getPRO())
                                     <div class="mec-col-4">
                                         <input type="text" id="mec_settings_next_event_module_date_format1" name="mec[settings][next_event_module_date_format1]" value="<?php echo ((isset($settings['next_event_module_date_format1']) and trim($settings['next_event_module_date_format1']) != '') ? $settings['next_event_module_date_format1'] : 'M d Y'); ?>" />
                                         <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php _e('Date Format', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e("Default is M d Y", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/next-event-module/" target="_blank"><?php _e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
+                                            <div class="box top">
+                                                <h5 class="title"><?php _e('Date Format', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("Default is M d Y", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/next-event-module/" target="_blank"><?php _e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <?php if($this->main->getPRO()): ?>
-
-                            <div id="buddy_option" class="mec-options-fields">
-                                <h4 class="mec-form-subtitle"><?php _e('BuddyPress Integration', 'modern-events-calendar-lite'); ?></h4>
+                        <div id="buddy_option" class="mec-options-fields">
+                            <h4 class="mec-form-subtitle"><?php _e('BuddyPress Integration', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-form-row">
+                                <label>
+                                    <input type="hidden" name="mec[settings][bp_status]" value="0" />
+                                    <input onchange="jQuery('#mec_bp_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][bp_status]" <?php if(isset($settings['bp_status']) and $settings['bp_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable BuddyPress Integration', 'modern-events-calendar-lite'); ?>
+                                </label>
+                            </div>
+                            <div id="mec_bp_container_toggle" class="<?php if((isset($settings['bp_status']) and !$settings['bp_status']) or !isset($settings['bp_status'])) echo 'mec-util-hidden'; ?>">
                                 <div class="mec-form-row">
                                     <label>
-                                        <input type="hidden" name="mec[settings][bp_status]" value="0" />
-                                        <input onchange="jQuery('#mec_bp_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][bp_status]" <?php if(isset($settings['bp_status']) and $settings['bp_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable BuddyPress Integration', 'modern-events-calendar-lite'); ?>
+                                        <input type="hidden" name="mec[settings][bp_attendees_module]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][bp_attendees_module]" <?php if(isset($settings['bp_attendees_module']) and $settings['bp_attendees_module']) echo 'checked="checked"'; ?> /> <?php _e('Show "Attendees Module" in event details page', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
-                                <div id="mec_bp_container_toggle" class="<?php if((isset($settings['bp_status']) and !$settings['bp_status']) or !isset($settings['bp_status'])) echo 'mec-util-hidden'; ?>">
-                                    <div class="mec-form-row">
-                                        <label>
-                                            <input type="hidden" name="mec[settings][bp_attendees_module]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][bp_attendees_module]" <?php if(isset($settings['bp_attendees_module']) and $settings['bp_attendees_module']) echo 'checked="checked"'; ?> /> <?php _e('Show "Attendees Module" in event details page', 'modern-events-calendar-lite'); ?>
-                                        </label>
-                                    </div>
-                                    <div class="mec-form-row">
-                                        <label class="mec-col-3" for="mec_settings_bp_attendees_module_limit"><?php _e('Attendee Limit', 'modern-events-calendar-lite'); ?></label>
-                                        <div class="mec-col-4">
-                                            <input type="text" id="mec_settings_bp_attendees_module_limit" name="mec[settings][bp_attendees_module_limit]" value="<?php echo ((isset($settings['bp_attendees_module_limit']) and trim($settings['bp_attendees_module_limit']) != '') ? $settings['bp_attendees_module_limit'] : '20'); ?>" />
-                                        </div>
-                                    </div>
-                                    <div class="mec-form-row">
-                                        <label>
-                                            <input type="hidden" name="mec[settings][bp_add_activity]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][bp_add_activity]" <?php if(isset($settings['bp_add_activity']) and $settings['bp_add_activity']) echo 'checked="checked"'; ?> /> <?php _e('Add booking activity to user profile', 'modern-events-calendar-lite'); ?>
-                                        </label>
+                                <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_bp_attendees_module_limit"><?php _e('Attendee Limit', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-4">
+                                        <input type="text" id="mec_settings_bp_attendees_module_limit" name="mec[settings][bp_attendees_module_limit]" value="<?php echo ((isset($settings['bp_attendees_module_limit']) and trim($settings['bp_attendees_module_limit']) != '') ? $settings['bp_attendees_module_limit'] : '20'); ?>" />
                                     </div>
                                 </div>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][bp_add_activity]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][bp_add_activity]" <?php if(isset($settings['bp_add_activity']) and $settings['bp_add_activity']) echo 'checked="checked"'; ?> /> <?php _e('Add booking activity to user profile', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][bp_profile_menu]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][bp_profile_menu]" <?php if(isset($settings['bp_profile_menu']) and $settings['bp_profile_menu']) echo 'checked="checked"'; ?> /> <?php _e('Add events menu to user profile', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
                             </div>
-
+                        </div>
+                        <div id="learndash_options" class="mec-options-fields">
+                            <h4 class="mec-form-subtitle"><?php _e('LearnDash Integration', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-form-row">
+                                <label>
+                                    <input type="hidden" name="mec[settings][ld_status]" value="0" />
+                                    <input value="1" type="checkbox" name="mec[settings][ld_status]" <?php if(isset($settings['ld_status']) and $settings['ld_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable LearnDash Integration', 'modern-events-calendar-lite'); ?>
+                                </label>
+                            </div>
+                            <p class="description"><?php esc_html_e('LearnDash plugin should be installed and activated.'); ?></p>
+                        </div>
                         <?php endif; ?>
 
                         <div class="mec-options-fields">
@@ -387,6 +417,15 @@ jQuery(document).ready(function()
     {
         event.preventDefault();
         jQuery("#mec_modules_form_button").trigger('click');
+    });
+
+    jQuery('#mec_settings_next_event_module_method').on('change', function()
+    {
+        var value = jQuery(this).val();
+        var $wrapper = jQuery('#mec_settings_next_event_module_multiple_count_wrapper');
+
+        if(value === 'multiple') $wrapper.show();
+        else $wrapper.hide();
     });
 });
 

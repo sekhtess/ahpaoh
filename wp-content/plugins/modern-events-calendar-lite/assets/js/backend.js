@@ -138,7 +138,7 @@ jQuery(document).ready(function($)
     $('.mec-checkbox-toggle').on('change', function()
     {
         var id = $(this).attr('id');
-        $(".mec-checkbox-toggle:not(#"+id+")").attr('checked', false);
+        $(".mec-checkbox-toggle:not(#"+id+")").prop('checked', false);
     });
 
     // MEC Setting Sticky
@@ -621,14 +621,14 @@ function mec_skin_toggle()
     if(skin === 'list' || skin === 'grid' || skin === 'agenda' || skin === 'timeline') jQuery('#mec_date_ongoing_filter').show();
     else
     {
-        jQuery("#mec_show_only_ongoing_events").attr('checked', false);
+        jQuery("#mec_show_only_ongoing_events").prop('checked', false);
         jQuery('#mec_date_ongoing_filter').hide();
     }
 
     // Show/Hide Expired Events
     if(skin === 'map')
     {
-        jQuery("#mec_show_only_past_events").attr('checked', false);
+        jQuery("#mec_show_only_past_events").prop('checked', false);
         jQuery('#mec_date_only_past_filter').hide();
     }
     else jQuery('#mec_date_only_past_filter').show();
@@ -691,6 +691,7 @@ jQuery(document).ready(function()
         var mail_subject = jQuery('#mec-send-email-subject').val();
         var mail_content = wp.editor.getContent('editor' + jQuery(this).data('id'));
         var mail_message = jQuery('#mec-send-email-message');
+        var mail_copy = jQuery('#mec-send-admin-copy').is(':checked') ? 1 : 0;
 
         if(data_send.length == 0) mail_message.attr('class', 'mec-util-hidden mec-error').html(jQuery('#mec-send-email-no-user-selected').val()).show();
         else if(mail_subject.length == 0) mail_message.attr('class', 'mec-util-hidden mec-error').html(jQuery('#mec-send-email-empty-subject').val()).show();
@@ -708,7 +709,8 @@ jQuery(document).ready(function()
                     nonce: mec_admin_localize.ajax_nonce,
                     mail_recipients_info: data_send,
                     mail_subject: mail_subject,
-                    mail_content: mail_content
+                    mail_content: mail_content,
+                    mail_copy: mail_copy
                 },
                 success: function(response)
                 {

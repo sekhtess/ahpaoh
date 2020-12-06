@@ -14,7 +14,8 @@ class MEC_feature_fes extends MEC_base
     public $settings;
     public $PT;
     public $render;
-    
+    public $relative_link = false;
+
     /**
      * Constructor method
      * @author Webnus <info@webnus.biz>
@@ -62,6 +63,9 @@ class MEC_feature_fes extends MEC_base
 
         // Remove the event
         $this->factory->action('wp_ajax_mec_fes_remove', array($this, 'fes_remove'));
+
+        // Event Published
+        $this->factory->action('transition_post_status', array($this, 'status_changed'), 10, 3);
     }
     
     /**
@@ -77,8 +81,11 @@ class MEC_feature_fes extends MEC_base
         
         if(isset($_GET['vlist']) and $_GET['vlist'] == 1)
         {
-            return $this->vlist();
+            return $this->vlist($atts);
         }
+
+        // Force to Relative Link
+        $this->relative_link = (isset($atts['relative-link']) and $atts['relative-link']);
         
         // Show login/register message if user is not logged in and guest submission is not enabled.
         if(!is_user_logged_in() and (!isset($this->settings['fes_guest_status']) or (isset($this->settings['fes_guest_status']) and $this->settings['fes_guest_status'] == '0')))
@@ -142,6 +149,9 @@ class MEC_feature_fes extends MEC_base
         if(!is_array($atts)) $atts = array();
         
         $post_id = isset($_GET['post_id']) ? sanitize_text_field($_GET['post_id']) : NULL;
+
+        // Force to Relative Link
+        $this->relative_link = (isset($atts['relative-link']) and $atts['relative-link']);
         
         // Show a warning to current user if modification of post is not possible for him/her
         if($post_id > 0 and !current_user_can('edit_post', $post_id))
@@ -155,7 +165,7 @@ class MEC_feature_fes extends MEC_base
         }
         elseif($post_id == -1 or ($post_id > 0 and current_user_can('edit_post', $post_id)))
         {
-            return $this->vform();
+            return $this->vform($atts);
         }
         
         // Show login/register message if user is not logged in
@@ -230,7 +240,7 @@ class MEC_feature_fes extends MEC_base
         $main_event_id = NULL;
         if(count($event_ids) == 1) $main_event_id = $event_ids[0];
 
-        $columns = array(__('ID', 'modern-events-calendar-lite'), __('Event', 'modern-events-calendar-lite'), __('Date', 'modern-events-calendar-lite'), __('Order Time', 'modern-events-calendar-lite'), $this->main->m('ticket', __('Ticket', 'modern-events-calendar-lite')), __('Transaction ID', 'modern-events-calendar-lite'), __('Total Price', 'modern-events-calendar-lite'), __('Name', 'modern-events-calendar-lite'), __('Email', 'modern-events-calendar-lite'), __('Ticket Variation', 'modern-events-calendar-lite'), __('Confirmation', 'modern-events-calendar-lite'), __('Verification', 'modern-events-calendar-lite'));
+        $columns = array(__('ID', 'modern-events-calendar-lite'), __('Event', 'modern-events-calendar-lite'), __('Date', 'modern-events-calendar-lite'), __('Order Time', 'modern-events-calendar-lite'), $this->main->m('ticket', __('Ticket', 'modern-events-calendar-lite')), __('Transaction ID', 'modern-events-calendar-lite'), __('Total Price', 'modern-events-calendar-lite'), __('Gateway', 'modern-events-calendar-lite'), __('Name', 'modern-events-calendar-lite'), __('Email', 'modern-events-calendar-lite'), __('Ticket Variation', 'modern-events-calendar-lite'), __('Confirmation', 'modern-events-calendar-lite'), __('Verification', 'modern-events-calendar-lite'));
         $columns = apply_filters('mec_csv_export_columns', $columns);
 
         $reg_fields = $this->main->get_reg_fields($main_event_id);
@@ -269,6 +279,7 @@ class MEC_feature_fes extends MEC_base
             if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($post_id, 'mec_attendee', true));
 
             $price = get_post_meta($post_id, 'mec_price', true);
+            $gateway_label = get_post_meta($post_id, 'mec_gateway_label', true);
             $booker = $u->booking($post_id);
             
             $confirmed = $this->main->get_confirmation_label(get_post_meta($post_id, 'mec_confirmed', true));
@@ -294,16 +305,16 @@ class MEC_feature_fes extends MEC_base
                 if(isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
 
                 $ticket_variations_output = '';
-                if(isset($transaction['tickets']) and is_array($transaction['tickets']) and isset($transaction['tickets'][$counter]) and isset($transaction['tickets'][$counter]['variations']))
+                if(isset($attendee['variations']) and is_array($attendee['variations']) and count($attendee['variations']))
                 {
-                    foreach($transaction['tickets'][$counter]['variations'] as $variation_id => $variation_count)
+                    foreach($attendee['variations'] as $a_variation_id => $a_variation_count)
                     {
-                        if($variation_count > 0) $ticket_variations_output .= $ticket_variations[$variation_id]['title'].": ( ".$variation_count.' )'.", ";
+                        if((int) $a_variation_count > 0) $ticket_variations_output .= $ticket_variations[$a_variation_id]['title'].": (".$a_variation_count.')'.", ";
                     }
                 }
 
                 $ticket_id = isset($attendee['id']) ? $attendee['id'] : get_post_meta($post_id, 'mec_ticket_id', true);
-                $booking = array($post_id, get_the_title($event_id), get_the_date('', $post_id), $order_time, (isset($tickets[$ticket_id]['name']) ? $tickets[$ticket_id]['name'] : __('Unknown', 'modern-events-calendar-lite')), $transaction_id, $this->main->render_price(($price ? $price : 0)), (isset($attendee['name']) ? $attendee['name'] : (isset($booker->first_name) ? trim($booker->first_name.' '.$booker->last_name) : '')), (isset($attendee['email']) ? $attendee['email'] : @$booker->user_email), trim($ticket_variations_output, ', '), $confirmed, $verified);
+                $booking = array($post_id, get_the_title($event_id), get_the_date('', $post_id), $order_time, (isset($tickets[$ticket_id]['name']) ? $tickets[$ticket_id]['name'] : __('Unknown', 'modern-events-calendar-lite')), $transaction_id, $this->main->render_price(($price ? $price : 0)), $gateway_label, (isset($attendee['name']) ? $attendee['name'] : (isset($booker->first_name) ? trim($booker->first_name.' '.$booker->last_name) : '')), (isset($attendee['email']) ? $attendee['email'] : @$booker->user_email), trim($ticket_variations_output, ', '), $confirmed, $verified);
                 $booking = apply_filters('mec_csv_export_booking', $booking, $post_id, $event_id);
 
                 $reg_form = isset($attendee['reg']) ? $attendee['reg'] : array();
@@ -428,8 +439,18 @@ class MEC_feature_fes extends MEC_base
         $post_speakers = isset($mec['speakers']) ? $mec['speakers'] : array();
         $post_labels = isset($mec['labels']) ? $mec['labels'] : array();
         $featured_image = isset($mec['featured_image']) ? sanitize_text_field($mec['featured_image']) : '';
-        
+
+        // Title is Required
         if(!trim($post_title)) $this->main->response(array('success'=>0, 'message'=>__('Please fill event title field!', 'modern-events-calendar-lite'), 'code'=>'TITLE_IS_EMPTY'));
+
+        // Body is Required
+        if(isset($this->settings['fes_required_body']) and $this->settings['fes_required_body'] and !trim($post_content)) $this->main->response(array('success'=>0, 'message'=>__('Please fill event body field!', 'modern-events-calendar-lite'), 'code'=>'BODY_IS_EMPTY'));
+
+        // Category is Required
+        if(isset($this->settings['fes_required_category']) and $this->settings['fes_required_category'] and is_array($post_categories) and !count($post_categories)) $this->main->response(array('success'=>0, 'message'=>__('Please select at-least one category!', 'modern-events-calendar-lite'), 'code'=>'CATEGORY_IS_EMPTY'));
+
+        // Label is Required
+        if(isset($this->settings['fes_required_label']) and $this->settings['fes_required_label'] and is_array($post_labels) and !count($post_labels)) $this->main->response(array('success'=>0, 'message'=>__('Please select at-least one label!', 'modern-events-calendar-lite'), 'code'=>'LABEL_IS_EMPTY'));
         
         // Post Status
         $status = 'pending';
@@ -440,6 +461,9 @@ class MEC_feature_fes extends MEC_base
         // Create new event
         if($post_id == -1)
         {
+            // Force Status
+            if(isset($this->settings['fes_new_event_status']) and trim($this->settings['fes_new_event_status'])) $status = $this->settings['fes_new_event_status'];
+
             $post = array('post_title'=>$post_title, 'post_content'=>$post_content, 'post_excerpt'=>$post_excerpt, 'post_type'=>$this->PT, 'post_status'=>$status);
             $post_id = wp_insert_post($post);
             
@@ -689,6 +713,8 @@ class MEC_feature_fes extends MEC_base
         $hide_time = isset($date['hide_time']) ? 1 : 0;
         $hide_end_time = isset($date['hide_end_time']) ? 1 : 0;
         $comment = isset($date['comment']) ? $date['comment'] : '';
+        $timezone = (isset($mec['timezone']) and trim($mec['timezone']) != '') ? sanitize_text_field($mec['timezone']) : 'global';
+        $countdown_method = (isset($mec['countdown_method']) and trim($mec['countdown_method']) != '') ? sanitize_text_field($mec['countdown_method']) : 'global';
         
         // Set start time and end time if event is all day
         if($allday == 1)
@@ -757,6 +783,8 @@ class MEC_feature_fes extends MEC_base
         update_post_meta($post_id, 'mec_hide_time', $hide_time);
         update_post_meta($post_id, 'mec_hide_end_time', $hide_end_time);
         update_post_meta($post_id, 'mec_comment', $comment);
+        update_post_meta($post_id, 'mec_timezone', $timezone);
+        update_post_meta($post_id, 'mec_countdown_method', $countdown_method);
         update_post_meta($post_id, 'mec_repeat_status', $repeat_status);
         update_post_meta($post_id, 'mec_repeat_type', $repeat_type);
         update_post_meta($post_id, 'mec_repeat_interval', $repeat_interval);
@@ -1261,33 +1289,90 @@ class MEC_feature_fes extends MEC_base
 
         // Save Event Data
         do_action('mec_save_event_data', $post_id, $mec);
+
+        $redirect_to = ((isset($this->settings['fes_thankyou_page']) and trim($this->settings['fes_thankyou_page'])) ? get_permalink(intval($this->settings['fes_thankyou_page'])) : '');
+        if(isset($this->settings['fes_thankyou_page_url']) and trim($this->settings['fes_thankyou_page_url'])) $redirect_to = esc_url($this->settings['fes_thankyou_page_url']);
         
         $this->main->response(array(
             'success' => 1,
             'message' => $message,
             'data'=> array(
                 'post_id' => $post_id,
-                'redirect_to' => (isset($this->settings['fes_thankyou_page']) and trim($this->settings['fes_thankyou_page'])) ? get_permalink(intval($this->settings['fes_thankyou_page'])) : '',
+                'redirect_to' => $redirect_to,
             ),
         ));
     }
     
     public function link_add_event()
     {
-        if(isset($this->settings['fes_form_page']) and trim($this->settings['fes_form_page'])) return get_permalink($this->settings['fes_form_page']);
+        if(!$this->relative_link and isset($this->settings['fes_form_page']) and trim($this->settings['fes_form_page'])) return get_permalink($this->settings['fes_form_page']);
         else return $this->main->add_qs_var('post_id', '-1', $this->main->remove_qs_var('vlist'));
     }
     
     public function link_edit_event($post_id)
     {
-        if(isset($this->settings['fes_form_page']) and trim($this->settings['fes_form_page'])) return $this->main->add_qs_var('post_id', $post_id, get_permalink($this->settings['fes_form_page']));
+        if(!$this->relative_link and isset($this->settings['fes_form_page']) and trim($this->settings['fes_form_page'])) return $this->main->add_qs_var('post_id', $post_id, get_permalink($this->settings['fes_form_page']));
         else return $this->main->add_qs_var('post_id', $post_id, $this->main->remove_qs_var('vlist'));
     }
     
     public function link_list_events()
     {
-        if(isset($this->settings['fes_list_page']) and trim($this->settings['fes_list_page'])) return get_permalink($this->settings['fes_list_page']);
+        if(!$this->relative_link and isset($this->settings['fes_list_page']) and trim($this->settings['fes_list_page'])) return get_permalink($this->settings['fes_list_page']);
         else return $this->main->add_qs_var('vlist', 1, $this->main->remove_qs_var('post_id'));
+    }
+
+    /**
+     * @param string $new_status
+     * @param string $old_status
+     * @param WP_Post $post
+     */
+    public function status_changed($new_status, $old_status, $post)
+    {
+        // User creation is not enabled
+        if(!isset($this->settings['fes_guest_user_creation']) or (isset($this->settings['fes_guest_user_creation']) and !$this->settings['fes_guest_user_creation'])) return;
+
+        if(('publish' === $new_status && 'publish' !== $old_status) && $this->PT === $post->post_type)
+        {
+            $guest_email = get_post_meta($post->ID, 'fes_guest_email', true);
+            if(!trim($guest_email) or (trim($guest_email) and !is_email($guest_email))) return;
+
+            $user_id = 0;
+            $user_exists = email_exists($guest_email);
+
+            if($user_exists and $user_exists == $post->post_author) return;
+            elseif($user_exists) $user_id = $user_exists;
+            else
+            {
+                $registered = register_new_user($guest_email, $guest_email);
+                if(!is_wp_error($registered))
+                {
+                    $user_id = $registered;
+
+                    $guest_name = get_post_meta($post->ID, 'fes_guest_name', true);
+                    $ex = explode(' ', $guest_name);
+
+                    $first_name = $ex[0];
+                    unset($ex[0]);
+
+                    $last_name = implode(' ', $ex);
+
+                    wp_update_user(array(
+                        'ID' => $user_id,
+                        'first_name' => $first_name,
+                        'last_name' => $last_name,
+                    ));
+
+                    $user = new WP_User($user_id);
+                    $user->set_role('author');
+                }
+            }
+
+            if($user_id)
+            {
+                $db = $this->getDB();
+                $db->q("UPDATE `#__posts` SET `post_author`='$user_id' WHERE `ID`='".$post->ID."'");
+            }
+        }
     }
 }
 

@@ -3,8 +3,8 @@ Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 5.5.1
-Stable tag: 5.12.0
+Tested up to: 5.5.3
+Stable tag: 5.14.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -113,6 +113,10 @@ We have begun to create practical [add-ons](https://webnus.net/modern-events-cal
 - [Virtual Events](https://webnus.net/modern-events-calendar/addons/virtual-events/) - [Documentation](https://webnus.net/dox/modern-events-calendar/virtual-events-addon/)
 - [Waiting List](https://webnus.net/modern-events-calendar/addons/waiting-list/) - [Documentation](https://webnus.net/dox/modern-events-calendar/waiting-list-addon/)
 - [Divi Single Builder](https://webnus.net/modern-events-calendar/addons/divi-single-builder/) - [Documentation](https://webnus.net/dox/modern-events-calendar/divi-single-builder-for-mec/)
+- [Zoom Integration](https://webnus.net/modern-events-calendar/addons/zoom-integration/) - [Documentation](https://webnus.net/dox/modern-events-calendar/zoom-integration-addon/)
+- [Advanced Organizer](https://webnus.net/modern-events-calendar/addons/advanced-organizer/) - [Documentation](https://webnus.net/dox/modern-events-calendar/advanced-organizer-addon/)
+- [Advanced Speaker](https://webnus.net/modern-events-calendar/addons/advanced-speaker/) - [Documentation](https://webnus.net/dox/modern-events-calendar/advanced-speaker-addon/)
+- [Advanced Location](https://webnus.net/modern-events-calendar/addons/advanced-location/) - [Documentation](https://webnus.net/dox/modern-events-calendar/advanced-location-addon/)
 
 == Helpful Documentation ==
 Best event management plugin [documentation](https://webnus.net/dox/modern-events-calendar/) is useful without overstatement for [Modern Event Calendar](https://webnus.net/modern-events-calendar/). It starts with simple steps for easy configuration and covers all essential aspects from beginning to the most advanced parts with step by step configuration of the plugin.
@@ -191,6 +195,9 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Constant Contact
 - Active Campaign
 - BuddyPress
+- Learn Dash
+- MailPoet
+- Sendfox
 - Google Recaptcha
 - Google Map
 
@@ -203,6 +210,11 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - [Developer documentation](https://webnus.net/dox/modern-events-calendar/category/developer-document/)
 
 == Key Features ==
+- Resend booking verification and confirmation email (*pro*)
+- Countdown method per event
+- Set different timezone per event
+- Set coupons for multiple events
+- Lock pre-filled fields (*pro*)
 - Discount per user roles (*pro*)
 - Refund bookings paid by Stripe gateway (*pro*)
 - Prevent user account (*pro*)
@@ -212,16 +224,14 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Change event parameters per occurrence (*pro*)
 - Set booking limit per different occurrences (pro)
 - Booking Button in Modal Window for All Shortcodes (*pro*)
-- Notifications Per Event  (*pro*)
-- Booking shortcode  (*pro*)
-- Download-able file feature  (*pro*)
+- Notifications Per Event (*pro*)
+- Booking shortcode (*pro*)
+- Download-able file feature (*pro*)
 - Sort payment gateways (*pro*)
 - Booking fixed fields per booking (*pro*)
 - Custom event fields
 - Multiple occurrences in one day
 - Different hours for custom days repeat
-- WordPress dashboard widgets (*pro*)
-- Ticket limit for coupon (*pro*)
 - Show Normal Label
 - Event Management System
 - Event Status for Schema
@@ -282,6 +292,8 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Customizable Notifications Emails
 - Recurring/Repeating events
 - Next Event Module
+- Next/Previous Module
+- Related Events Module
 - Custom Booking Form for Single Events (*pro*)
 - Payments for Certain Single Events (*pro*)
 - Shortcode Creator
@@ -343,6 +355,10 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Confirmation email (*pro*)
 - Cancellation email (*pro*)
 - Restrict The Booking Cancellation time (*pro*)
+- Specify period for booking cancellation rules (*pro*)
+- WordPress dashboard widgets (*pro*)
+- Private description for tickets (*pro*)
+- Ticket limit for coupon (*pro*)
 - Bulk Emails to Attendees (*pro*)
 - Minimum Ticket Option (*pro*)
 - Minimum and maximum ticket for coupons (*pro*)
@@ -419,6 +435,145 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 41. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= v 5.14.0 – 2 December 2020 =
+- Added: MailPoet integration (pro)
+- Added: Sendfox integration (pro)
+- Added: An option to disable/enable “Full Screen” button of Google Maps (pro)
+- Added: An option to override MEC assets (JS, CSS, etc) in a child theme
+- Added: Two new controls for carousel skin to manage auto play and loop
+- Added: Gateway to the booking export (pro)
+- Added: Private description for tickets to be included in the booking notifications (pro)
+- Added: An option to show organizers' names in the list, grid, tile, masonry, daily, weekly, and timeline skins
+- Added: Some new capabilities for MEC menus so users can create their own role for managing MEC
+- Added: An ability to specify period for booking cancellation rules (pro)
+- Added: An option to set background color for all notifications
+- Fixed: Back button of booking module (pro)
+- Fixed: Showing recently expired events when the shortcode is set to show only expired events
+- Fixed: Outdated WordPress versions
+- Fixed: An issue in finding events
+- Fixed: Date format of timeline skin
+- Fixed: Some issues related to Day Light Saving
+- Fixed: Disabling all Google fonts
+- Fixed: Some date format issues
+
+= v 5.13.6 – 18 November 2020 =
+- Improved: Weekly skin to show events of the previous and next month in the current month (pro)
+- Fixed: Showing long-time span events in shortcakes
+- Fixed: Sending duplicated emails on booking reminder notification (pro)
+- Fixed: Showing dates on the backend booking menu (pro)
+- Fixed: Ticket variations in the booking export feature (pro)
+- Fixed: Event description exported to Google or iCal services
+- Fixed: Manual username and password in the booking form (pro)
+- Fixed: Date format of multiple-day events
+- Fixed: "%%payment_gateway%%" placeholder (pro)
+- Fixed: Showing unlimited for tickets when the total booking is limited (pro)
+- Fixed: The export and import of the advanced events
+- Fixed: Related to Daylight Saving and Timezones
+- Fixed: Some PHP notices
+
+= 5.13.5 – 10 November 2020 =
+- Added: “Event Sold-out” notification (pro)
+- Added: “Booking Rejection” notification (pro)
+- Added: Ability to translate booking fields in the translated event in multilingual websites (pro)
+- Added: An option to exclude admin from recipients in admin booking notification (pro)
+- Added: An option to specify the status of new events submitted from “Frontend Submission”
+- Added: An option to redirect users to a certain URL after submitting events from the frontend instead of the WordPress page
+- Added: Event description and featured image to the CSV export (pro)
+- Added: An option to change auto verification status and auto-confirmation status per event instead of the global option (pro)
+- Added: A new option to the existing “Next Event” module to display multiple occurrences of the current event instead of only one occurrence
+- Added: A new integration with AWeber email marketing platform (pro)
+- Improved: memory usage
+- Fixed: Booking over total slots (pro)
+- Fixed: Masonry skin (pro)
+- Fixed: Reminder notification (pro)
+- Fixed: Verification and cancellation links (pro)
+- Fixed: An display issue regarding the location on PDF invoice (pro)
+- Fixed: Event popup
+- Fixed: Booking dates of custom single pages
+- Fixed: Booking validation on payment step (pro)
+- Fixed: Color style on the map view shortcode and next/previous module
+- Fixed: some PHP notices
+
+= 5.13.1 – 28 October 2020 =
+- Added: An option to disable “Lock pre-filled fields” for other attendees (pro)
+- Added: A new placeholder to show “Event Timezone” in email notifications (pro)
+- Fixed: Registration button box on single event pages (pro)
+- Fixed: Date field in booking form (pro)
+- Fixed: Showing time of multiple day events
+- Fixed: An issue in search bar
+- Fixed: Admin notification (pro)
+- Fixed: Booking module (pro)
+- Fixed: An issue in iCal export module
+- Fixed: An issue in language of Google maps (pro)
+- Fixed: Geolocation feature of map skins (pro)
+- Fixed: Date format of multiple day events
+- Fixed: Some PHP notices and warnings
+
+= 5.13.0 – 20 October 2020 =
+- Added: Learn dash integration by linking a course to any ticket and enrolling the user to learn dash course after booking (pro)
+- Added: A new integration with BuddyPress by showing the “Frontend Event Submission” on the profile menu
+- Added: Category display to tile, masonry, timeline, daily, weekly and minimal style of list skin (pro)
+- Added: An ability to import events from WP Event Manager plugin (pro)
+- Added: Occurrence dates on booking edit page in the backend of “Sell all occurrences by one booking” (pro)
+- Added: An option to change the start time of ticket sale per event
+- Added: An ability to make some fields mandatory in “Frontend Event Submission” (pro)
+- Added: An option to set required fields in “Frontend Event Submission”
+- Added: Yesterday, Last Week, Last Month, and Last Year to the start date options
+- Added: Custom shortcake option for category archive pages
+- Added: A new option in the reports menu to send a copy of the email to the website admin (pro)
+- Improved: The WooCommerce Payment System to validate the availability of tickets before checkout (pro)
+- Improved: The label of booking button by adding a separate option in the messages panel (pro)
+- Improved: The tile skin by making the image clickable
+- Improved: The last PayPal error on Gateway options (pro)
+- Improved: The report menu by sorting the attendees alphabetically (pro)
+- Fixed: Some issues in MEC registration system (pro)
+- Fixed: An issue in manual username and password fields (pro)
+- Fixed: An issue with event filter in manage bookings menu in backend  on multilingual websites (pro)
+- Fixed: Some multilingual issues reported by WPML team
+- Fixed: An issue in required name and email on register form (pro)
+- Fixed: Recaptcha layout on modal popup (pro)
+- Fixed: Some minor issues
+
+= 5.12.6 – 7 October 2020 =
+- Added: An option to change the countdown method per event
+- Added: A new option to WooCommerce system to disable/enable MEC booking form (pro)
+- Added: A new ability to resend booking verification email (pro)
+- Added: An ability to resend booking confirmation email (pro)
+- Added: An option to disable/enable payment gateways per event (pro)
+- Added: Next/Previous module
+- Improved: The WooCommerce system to automatically load event featured image if the ticket product doesn’t have any image (pro)
+- Improved: The WooCommerce system to consider coupon and price after discount (pro)
+- Improved: The WooCommerce system to display booking date next to the ticket name (pro)
+- Fixed: An issue in showing date labels
+- Fixed: An issue in yearly view to automatically load the event if hidden (pro)
+- Fixed: An issue in the default value of repeat interval
+- Fixed: A jQuery issue
+
+= 5.12.5 – 30 September 2020 =
+- Added: An ability to set different timezone per event
+- Added: An option to disable/enable timezone per event feature
+- Added: An ability to set coupons for multiple events for better management (pro)
+- Added: An option to disable links to single event pages in different skins
+- Added: An option to lock pre-filled fields and make them read-only in booking form (pro)
+- Added: 3 placeholders for additional organizers (pro)
+- Added: Event fixed fields to the booking export (pro)
+- Added: Event start date in reports menu (pro)
+- Added: An option to show categories in list and grid skins
+- Added: Location name into the CSV export (pro)
+- Added: A function for displaying related events in single event pages
+- Added: An option to disable admin notification for admin of website but keep it enabled for other recipients (pro)
+- Improved: The Frontend Event Submission by adding a user for the guest user and assigning it as an event owner after event approval by admin
+- Improved: The website speed by loading JS and CSS files into the website footer
+- Improved: The database queries to speed up the frontend views
+- Removed: Constant Contact .zip file
+- Fixed: An issue in “Show only one occurrence” events in very special conditions
+- Fixed: Some query issues during the update
+- Fixed: An issue in Import/Export cron jobs (pro)
+- Fixed: An issue in required radio fields
+- Fixed: An issue in the headline of the checkout step (pro)
+- Fixed: Some translation issues
+- Fixed: Some issues
+
 = 5.12.0 – 15 September 2020 =
 - Added: An option to provide a discount per user roles (pro)
 - Added: An option to show the date number before the month in Monthly Skin

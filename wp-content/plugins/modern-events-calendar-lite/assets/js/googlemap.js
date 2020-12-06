@@ -7,11 +7,12 @@
             latitude: 0,
             longitude: 0,
             autoinit: true,
+            fullscreen_button: false,
             zoom: 14,
             icon: '../img/m-01.png',
             markers: {},
             sf: {},
-            HTML5geolocation: 0,
+            geolocation: 0,
             getDirection: 0,
             directionOptions: {
                 form: '#mec_get_direction_form',
@@ -55,7 +56,8 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 center: center,
                 zoom: settings.zoom,
-                styles: settings.styles
+                styles: settings.styles,
+                fullscreenControl: settings.fullscreen_button
             };
 
             // Init map
@@ -144,7 +146,7 @@
             }
 
             // Geolocation
-            if((settings.HTML5geolocation || (options.geolocation !== 'undefined' && options.geolocation === true)) && navigator.geolocation)
+            if((settings.geolocation !== 'undefined' && settings.geolocation) && navigator.geolocation)
             {
                 navigator.geolocation.getCurrentPosition(function (position)
                 {

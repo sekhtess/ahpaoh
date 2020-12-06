@@ -88,7 +88,7 @@ if(!is_array($booking_options)) $booking_options = array();
 
         <div class="col-md-4">
             
-            <div class="mec-event-meta mec-color-before mec-frontbox <?php echo ((!$this->main->can_show_booking_module($event) and in_array($event->data->meta['mec_organizer_id'], array('0', '1'))) ? 'mec-util-hidden' : '') ; ?>">
+            <div class="mec-event-meta mec-color-before mec-frontbox <?php echo ((!$this->main->can_show_booking_module($event) and in_array($event->data->meta['mec_organizer_id'], array('0', '1')) and (!trim($event->data->meta['mec_more_info']) or (trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] == 'http://'))) ? 'mec-util-hidden' : ''); ?>">
                 <?php
                 // Event Organizer
                 if(isset($event->data->organizers[$event->data->meta['mec_organizer_id']]) && !empty($event->data->organizers[$event->data->meta['mec_organizer_id']]))
@@ -157,7 +157,7 @@ if(!is_array($booking_options)) $booking_options = array();
             
             <div class="mec-event-meta mec-color-before mec-frontbox">
 
-                <?php do_action('mec_single_virtual_badge', $event->data->ID ); ?>
+                <?php do_action('mec_single_virtual_badge', $event->data ); ?>
                 
                 <?php
                 // Event Location
@@ -244,7 +244,7 @@ if(!is_array($booking_options)) $booking_options = array();
         <div class="col-md-8">
 
             <div class="mec-event-content">
-                <div class="mec-single-event-description mec-events-content"><?php echo $this->main->get_post_content($event->data->ID); ?></div>
+                <div class="mec-single-event-description mec-events-content"><?php echo $this->main->get_post_content($event); ?></div>
             </div>
 
             <?php do_action('mec_single_after_content', $event ); ?>

@@ -55,6 +55,8 @@ class MEC_book extends MEC_base
             $total_tickets_count += $count;
 
             $t_price = (isset($event_tickets[$ticket_id]) and isset($event_tickets[$ticket_id]['price'])) ? $this->get_ticket_price($event_tickets[$ticket_id], current_time('Y-m-d'), $event_id) : 0;
+            if(!is_numeric($t_price)) $t_price = 0;
+
             $total = $total+($t_price*$count);
         }
 
@@ -188,7 +190,7 @@ class MEC_book extends MEC_base
      * @param array $values
      * @param string $transaction_id
      * @param int $ticket_ids
-     * @return int
+     * @return int|boolean
      */
     public function add($values, $transaction_id, $ticket_ids)
     {
@@ -202,7 +204,7 @@ class MEC_book extends MEC_base
             if(trim($book_status) == 'trash') unset($db_transaction_ids[$db_transaction_id->post_id]);
         }
 
-        if(count($db_transaction_ids)) return;
+        if(count($db_transaction_ids)) return false;
 
         // Transaction Data
         $transaction = $this->get_transaction($transaction_id);
@@ -219,6 +221,9 @@ class MEC_book extends MEC_base
 
         // Update transaction id after insert book for prevent repeat reservation books.
         update_post_meta($book_id, 'mec_transaction_id', $transaction_id);
+
+        $transaction['booking_id'] = $book_id;
+        $this->update_transaction($transaction_id, $transaction);
 
         // Publish it
         wp_publish_post($book_id);
@@ -272,26 +277,29 @@ class MEC_book extends MEC_base
         // Fires after adding a new booking to send notifications etc
         do_action('mec_booking_added', $book_id);
 
+        list($auto_verify_free, $auto_verify_paid) = $this->get_auto_verification_status($event_id);
+        list($auto_confirm_free, $auto_confirm_paid) = $this->get_auto_confirmation_status($event_id);
+
         // Auto verification for free bookings is enabled
-        if($price <= 0 and isset($this->settings['booking_auto_verify_free']) and $this->settings['booking_auto_verify_free'] == 1)
+        if($price <= 0 and $auto_verify_free)
         {
             $this->verify($book_id);
         }
 
         // Auto verification for paid bookings is enabled
-        if($price > 0 and isset($this->settings['booking_auto_verify_paid']) and $this->settings['booking_auto_verify_paid'] == 1)
+        if($price > 0 and $auto_verify_paid)
         {
             $this->verify($book_id);
         }
 
         // Auto confirmation for free bookings is enabled
-        if($price <= 0 and isset($this->settings['booking_auto_confirm_free']) and $this->settings['booking_auto_confirm_free'] == 1)
+        if($price <= 0 and $auto_confirm_free)
         {
             $this->confirm($book_id, 'auto');
         }
 
         // Auto confirmation for paid bookings is enabled
-        if($price > 0 and isset($this->settings['booking_auto_confirm_paid']) and $this->settings['booking_auto_confirm_paid'] == 1)
+        if($price > 0 and $auto_confirm_paid)
         {
             // Work or don't work auto confirmation when pay through pay locally payment.
             $gateways_settings = get_option('mec_options', array());
@@ -316,6 +324,14 @@ class MEC_book extends MEC_base
 
         // Fires after confirming a booking to send notifications etc.
         do_action('mec_booking_confirmed', $book_id, $mode);
+
+        $event_id = get_post_meta($book_id, 'mec_event_id', true);
+        $date = get_post_meta($book_id, 'mec_date', true);
+        $timestamps = explode(':', $date);
+
+        // Event is soldout so fire the hook
+        $soldout = $this->main->is_sold($event_id, $timestamps[0]);
+        if($soldout) do_action('mec_event_soldout', $event_id, $book_id);
 
         return true;
     }
@@ -416,6 +432,9 @@ class MEC_book extends MEC_base
      */
     public function get_tickets_availability($event_id, $timestamp, $mode = 'availability')
     {
+        $ex = explode(':', $timestamp);
+        $timestamp = $ex[0];
+
         if(!is_numeric($timestamp)) $timestamp = strtotime($timestamp);
 
         $availability = array();
@@ -442,9 +461,6 @@ class MEC_book extends MEC_base
 
         // Total Booking Limit
         $total_bookings_limit_original = $total_bookings_limit;
-
-        $ex = explode(':', $timestamp);
-        $timestamp = (int) $ex[0];
 
         $year = date('Y', $timestamp);
         $month = date('m', $timestamp);
@@ -504,13 +520,13 @@ class MEC_book extends MEC_base
 
                     $bookings += (isset($ticket_ids_count[$ticket_id]) and is_numeric($ticket_ids_count[$ticket_id])) ? $ticket_ids_count[$ticket_id] : 0;
                 }
+
+                // Restore original Post Data
+                wp_reset_postdata();
             }
 
             if($total_bookings_limit > 0) $total_bookings_limit = max(($total_bookings_limit - $bookings), 0);
             $booked += $bookings;
-
-            // Restore original Post Data
-            wp_reset_postdata();
 
             // Ticket Selling Stop
             $stop_selling_value = isset($ticket['stop_selling_value']) ? trim($ticket['stop_selling_value']) : 0;
@@ -609,8 +625,17 @@ class MEC_book extends MEC_base
         // Event Specification
         if($status === 1)
         {
-            $target_event = get_term_meta($coupon_id, 'target_event', true);
-            if(trim($target_event) and trim($event_id) and $target_event != $event_id)
+            $all_events = get_term_meta($coupon_id, 'target_event', true);
+            if(trim($all_events) == '') $all_events = 1;
+
+            $target_events = get_term_meta($coupon_id, 'target_events', true);
+            if(!is_array($target_events))
+            {
+                $target_events = array();
+                if($all_events and $all_events != 1) $target_events[] = $all_events;
+            }
+
+            if(!$all_events and is_array($target_events) and count($target_events) and !in_array($event_id, $target_events))
             {
                 $status = -3;
             }
@@ -1088,5 +1113,51 @@ class MEC_book extends MEC_base
         }
 
         return ($ticket_price+$variation_price);
+    }
+
+    public function get_auto_verification_status($event_id)
+    {
+        // Booking Options
+        $BO = get_post_meta($event_id, 'mec_booking', true);
+        if(!is_array($BO)) $BO = array();
+
+        $event_auto_verify = (isset($BO['auto_verify']) and trim($BO['auto_verify']) != '') ? $BO['auto_verify'] : 'global';
+        if(is_numeric($event_auto_verify)) $event_auto_verify = (int) $event_auto_verify;
+
+        if($event_auto_verify == 'global')
+        {
+            $auto_verify_free = (isset($this->settings['booking_auto_verify_free']) ? $this->settings['booking_auto_verify_free'] : 0);
+            $auto_verify_paid = (isset($this->settings['booking_auto_verify_paid']) ? $this->settings['booking_auto_verify_paid'] : 0);
+        }
+        else
+        {
+            $auto_verify_free = $event_auto_verify;
+            $auto_verify_paid = $event_auto_verify;
+        }
+
+        return array($auto_verify_free, $auto_verify_paid);
+    }
+
+    public function get_auto_confirmation_status($event_id)
+    {
+        // Booking Options
+        $BO = get_post_meta($event_id, 'mec_booking', true);
+        if(!is_array($BO)) $BO = array();
+
+        $event_auto_confirm = (isset($BO['auto_confirm']) and trim($BO['auto_confirm']) != '') ? $BO['auto_confirm'] : 'global';
+        if(is_numeric($event_auto_confirm)) $event_auto_confirm = (int) $event_auto_confirm;
+
+        if($event_auto_confirm == 'global')
+        {
+            $auto_confirm_free = (isset($this->settings['booking_auto_confirm_free']) ? $this->settings['booking_auto_confirm_free'] : 0);
+            $auto_confirm_paid = (isset($this->settings['booking_auto_confirm_paid']) ? $this->settings['booking_auto_confirm_paid'] : 0);
+        }
+        else
+        {
+            $auto_confirm_free = $event_auto_confirm;
+            $auto_confirm_paid = $event_auto_confirm;
+        }
+
+        return array($auto_confirm_free, $auto_confirm_paid);
     }
 }

@@ -66,6 +66,7 @@ $get_n_option = get_option('mec_addons_notification_option');
                                         <option value="plus1" <?php if(isset($settings['hide_time_method']) and 'plus1' == $settings['hide_time_method']) echo 'selected="selected"'; ?>><?php _e('+1 Hour after start', 'modern-events-calendar-lite'); ?></option>
                                         <option value="plus2" <?php if(isset($settings['hide_time_method']) and 'plus2' == $settings['hide_time_method']) echo 'selected="selected"'; ?>><?php _e('+2 Hours after start', 'modern-events-calendar-lite'); ?></option>
                                         <option value="end" <?php if(isset($settings['hide_time_method']) and 'end' == $settings['hide_time_method']) echo 'selected="selected"'; ?>><?php _e('On Event End', 'modern-events-calendar-lite'); ?></option>
+                                        <?php do_action('mec_hide_time_methods', $settings); ?>
                                     </select>
                                     <span class="mec-tooltip">
                                         <div class="box">
@@ -82,7 +83,7 @@ $get_n_option = get_option('mec_addons_notification_option');
                                 <label class="mec-col-3" for="mec_settings_multiple_day_show_method"><?php _e('Multiple Day Events', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-4">
                                     <select id="mec_settings_multiple_day_show_method" name="mec[settings][multiple_day_show_method]">
-                                        <option value="first_day_listgrid" <?php if(isset($settings['multiple_day_show_method']) and $settings['multiple_day_show_method'] == 'first_day_listgrid') echo 'selected="selected"'; ?>><?php _e('Show only first day on List/Grid/Slider skins', 'modern-events-calendar-lite'); ?></option>
+                                        <option value="first_day_listgrid" <?php if(isset($settings['multiple_day_show_method']) and $settings['multiple_day_show_method'] == 'first_day_listgrid') echo 'selected="selected"'; ?>><?php _e('Show only first day on List/Grid/Slider/Agenda skins', 'modern-events-calendar-lite'); ?></option>
                                         <option value="first_day" <?php if(isset($settings['multiple_day_show_method']) and $settings['multiple_day_show_method'] == 'first_day') echo 'selected="selected"'; ?>><?php _e('Show only first day on all skins', 'modern-events-calendar-lite'); ?></option>
                                         <option value="all_days" <?php if(isset($settings['multiple_day_show_method']) and $settings['multiple_day_show_method'] == 'all_days') echo 'selected="selected"'; ?>><?php _e('Show all days', 'modern-events-calendar-lite'); ?></option>
                                     </select>
@@ -161,7 +162,7 @@ $get_n_option = get_option('mec_addons_notification_option');
                             <div class="mec-form-row">
 
                                 <label class="mec-col-3" for="mec_settings_weekdays"><?php _e('Weekdays', 'modern-events-calendar-lite'); ?></label>
-                                <div class="mec-col-8">
+                                <div class="mec-col-9">
                                     <?php $mec_weekdays = $this->main->get_weekdays(); foreach($weekdays as $weekday): ?>
                                     <label for="mec_settings_weekdays_<?php echo $weekday[0]; ?>">
                                         <input type="checkbox" id="mec_settings_weekdays_<?php echo $weekday[0]; ?>" name="mec[settings][weekdays][]" value="<?php echo $weekday[0]; ?>" <?php echo (in_array($weekday[0], $mec_weekdays) ? 'checked="checked"' : ''); ?> />
@@ -182,7 +183,7 @@ $get_n_option = get_option('mec_addons_notification_option');
                             <div class="mec-form-row">
 
                                 <label class="mec-col-3" for="mec_settings_weekends"><?php _e('Weekends', 'modern-events-calendar-lite'); ?></label>
-                                <div class="mec-col-8">
+                                <div class="mec-col-9">
                                     <?php $mec_weekends = $this->main->get_weekends(); foreach($weekdays as $weekday): ?>
                                     <label for="mec_settings_weekends_<?php echo $weekday[0]; ?>">
                                         <input type="checkbox" id="mec_settings_weekends_<?php echo $weekday[0]; ?>" name="mec[settings][weekends][]" value="<?php echo $weekday[0]; ?>" <?php echo (in_array($weekday[0], $mec_weekends) ? 'checked="checked"' : ''); ?> />
@@ -372,6 +373,9 @@ $get_n_option = get_option('mec_addons_notification_option');
                                             <option value="<?php echo $category_skin['skin']; ?>" <?php if(isset($settings['default_skin_category']) and $category_skin['skin'] == $settings['default_skin_category']) echo 'selected="selected"'; if(!isset($settings['default_skin_category']) and $category_skin['skin'] == 'list') echo 'selected="selected"'; ?>><?php echo $category_skin['name']; ?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <span class="mec-category-skins mec-category-custom-skins">
+                                        <input type="text" placeholder="<?php esc_html_e('Put shortcode...', 'modern-events-calendar-lite'); ?>" id="mec_settings_custom_archive_category" name="mec[settings][custom_archive_category]" value='<?php echo ((isset($settings['custom_archive_category']) and trim($settings['custom_archive_category']) != '') ? stripslashes($settings['custom_archive_category']) : ''); ?>' />
+                                    </span>
                                     <span class="mec-category-skins mec-category-full_calendar-skins">
                                         <input type="text" placeholder="<?php esc_html_e('There is no skins', 'modern-events-calendar-lite'); ?>" disabled />
                                     </span>
@@ -648,6 +652,16 @@ $get_n_option = get_option('mec_addons_notification_option');
                                 </div>
                                 <p class="description"><?php echo sprintf(__('Put %s shortcode into the page.', 'modern-events-calendar-lite'), '<code>[MEC_fes_form]</code>'); ?></p>
                             </div>
+                            <div class="mec-form-row">
+                                <label class="mec-col-3" for="mec_settings_fes_new_event_status"><?php _e('New Events Status', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-4">
+                                    <select id="mec_settings_fes_new_event_status" name="mec[settings][fes_new_event_status]">
+                                        <option value=""><?php esc_html_e('Let WordPress decide', 'modern-events-calendar-lite'); ?></option>
+                                        <option <?php echo ((isset($settings['fes_new_event_status']) and $settings['fes_new_event_status'] == 'pending') ? 'selected="selected"' : ''); ?> value="pending"><?php esc_html_e('Pending', 'modern-events-calendar-lite'); ?></option>
+                                        <option <?php echo ((isset($settings['fes_new_event_status']) and $settings['fes_new_event_status'] == 'publish') ? 'selected="selected"' : ''); ?> value="publish"><?php esc_html_e('Publish', 'modern-events-calendar-lite'); ?></option>
+                                    </select>
+                                </div>
+                            </div>
                             <!-- Start FES Thank You Page -->
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_settings_fes_thankyou_page"><?php _e('Thank You Page', 'modern-events-calendar-lite'); ?></label>
@@ -662,6 +676,19 @@ $get_n_option = get_option('mec_addons_notification_option');
                                         <div class="box top">
                                             <h5 class="title"><?php _e('Thank You Page', 'modern-events-calendar-lite'); ?></h5>
                                             <div class="content"><p><?php esc_attr_e("User is redirected to this page after a new event submission. Leave it empty if you want it disabled.", 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mec-form-row">
+                                <label class="mec-col-3" for="mec_settings_fes_thankyou_page_url"><?php _e('Thank You Page URL', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-4">
+                                    <input type="url" id="mec_settings_fes_thankyou_page_url" name="mec[settings][fes_thankyou_page_url]" value="<?php echo ((isset($settings['fes_thankyou_page_url']) and trim($settings['fes_thankyou_page_url']) != '') ? esc_url($settings['fes_thankyou_page_url']) : ''); ?>" placeholder="<?php echo esc_attr('http://yoursite/com/desired-url/'); ?>" />
+                                    <span class="mec-tooltip">
+                                        <div class="box top">
+                                            <h5 class="title"><?php _e('Thank You Page URL', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e("If filled it will use instead of thank you page set above.", 'modern-events-calendar-lite'); ?></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -709,7 +736,14 @@ $get_n_option = get_option('mec_addons_notification_option');
                                         <input value="1" type="checkbox" name="mec[settings][fes_guest_name_email]" <?php if(!isset($settings['fes_guest_name_email']) or (isset($settings['fes_guest_name_email']) and $settings['fes_guest_name_email'])) echo 'checked="checked"'; ?> /> <?php _e('Enable mandatory email and name for guest user', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][fes_guest_user_creation]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][fes_guest_user_creation]" <?php if(isset($settings['fes_guest_user_creation']) and $settings['fes_guest_user_creation']) echo 'checked="checked"'; ?> /> <?php _e('Automatically create users after event publish and assign event to the created user', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
                             </div>
+                            <br>
                             <h4 class="mec-form-subtitle"><?php _e('Frontend Event Submission Sections', 'modern-events-calendar-lite'); ?></h4>
                             <div class="mec-form-row">
                                 <label>
@@ -836,6 +870,24 @@ $get_n_option = get_option('mec_addons_notification_option');
                             </div>
                             <?php endif; ?>
 
+                            <?php if(is_plugin_active('mec-virtual-events/mec-virtual-events.php')): ?>
+                            <div class="mec-form-row">
+                                <label>
+                                    <input type="hidden" name="mec[settings][fes_section_virtual_events]" value="0" />
+                                    <input value="1" type="checkbox" name="mec[settings][fes_section_virtual_events]" <?php if(!isset($settings['fes_section_virtual_events']) or (isset($settings['fes_section_virtual_events']) and $settings['fes_section_virtual_events'])) echo 'checked="checked"'; ?> /> <?php _e('Virtual Event', 'modern-events-calendar-lite'); ?>
+                                </label>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if(is_plugin_active('mec-zoom-integration/mec-zoom-integration.php')): ?>
+                            <div class="mec-form-row">
+                                <label>
+                                    <input type="hidden" name="mec[settings][fes_section_zoom_integration]" value="0" />
+                                    <input value="1" type="checkbox" name="mec[settings][fes_section_zoom_integration]" <?php if(!isset($settings['fes_section_zoom_integration']) or (isset($settings['fes_section_zoom_integration']) and $settings['fes_section_zoom_integration'])) echo 'checked="checked"'; ?> /> <?php _e('Zoom Event', 'modern-events-calendar-lite'); ?>
+                                </label>
+                            </div>
+                            <?php endif; ?>
+
                             <div class="mec-form-row">
                                 <label>
                                     <input type="hidden" name="mec[settings][fes_note]" value="0" />
@@ -865,9 +917,26 @@ $get_n_option = get_option('mec_addons_notification_option');
                                             <i title="" class="dashicons-before dashicons-editor-help"></i>
                                         </span>
                                     </div>
-                                    
                                 </div>
                             </div>
+                            <br>
+                            <h4 class="mec-form-subtitle"><?php _e('Required Fields', 'modern-events-calendar-lite'); ?></h4>
+
+                            <?php foreach(array(
+                                'body' => __('Event Description', 'modern-events-calendar-lite'),
+                                'excerpt' => __('Excerpt', 'modern-events-calendar-lite'),
+                                'cost' => __('Cost', 'modern-events-calendar-lite'),
+                                'event_link' => __('Event Link', 'modern-events-calendar-lite'),
+                                'more_info_link' => __('More Info Link', 'modern-events-calendar-lite'),
+                                'category' => __('Category', 'modern-events-calendar-lite'),
+                                'label' => __('Label', 'modern-events-calendar-lite')) as $req_field => $label): ?>
+                            <div class="mec-form-row">
+                                <label>
+                                    <input type="hidden" name="mec[settings][fes_required_<?php echo $req_field; ?>]" value="0" />
+                                    <input value="1" type="checkbox" name="mec[settings][fes_required_<?php echo $req_field; ?>]" <?php if(isset($settings['fes_required_'.$req_field]) and $settings['fes_required_'.$req_field]) echo 'checked="checked"'; ?> /> <?php echo esc_html($label); ?>
+                                </label>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
 
                         <div id="user_profile_options" class="mec-options-fields">
@@ -1148,21 +1217,75 @@ $get_n_option = get_option('mec_addons_notification_option');
                                 </div>
                             </div>
 
-                            <div id="uploadfield_option" class="mec-options-fields">
-                                <h4 class="mec-form-subtitle"><?php _e('Upload Field Options', 'modern-events-calendar-lite'); ?></h4>
+                            <div id="aweber_option" class="mec-options-fields">
+                                <h4 class="mec-form-subtitle"><?php _e('AWeber Integration', 'modern-events-calendar-lite'); ?></h4>
                                 <div class="mec-form-row">
-                                    <label class="mec-col-3" for="mec_booking_form_upload_field_mime_types"><?php _e('Mime types', 'modern-events-calendar-lite'); ?></label>
-                                    <div class="mec-col-4">
-                                        <input type="text" id="mec_booking_form_upload_field_mime_types" name="mec[settings][upload_field_mime_types]" placeholder="jpeg,jpg,png,pdf" value="<?php echo ((isset($settings['upload_field_mime_types']) and trim($settings['upload_field_mime_types']) != '') ? $settings['upload_field_mime_types'] : ''); ?>" />
-                                    </div>
-                                    <p class="description"><?php echo __('Split mime types with ",".', 'modern-events-calendar-lite'); ?> <br /> <?php esc_attr_e("Default: jpeg,jpg,png,pdf", 'modern-events-calendar-lite'); ?></p>
+                                    <label>
+                                        <input type="hidden" name="mec[settings][aweber_status]" value="0" />
+                                        <input onchange="jQuery('#mec_aweber_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][aweber_status]" <?php if(isset($settings['aweber_status']) and $settings['aweber_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable AWeber Integration', 'modern-events-calendar-lite'); ?>
+                                    </label>
                                 </div>
-                                <div class="mec-form-row">
-                                    <label class="mec-col-3" for="mec_booking_form_upload_field_max_upload_size"><?php _e('Maximum file size', 'modern-events-calendar-lite'); ?></label>
-                                    <div class="mec-col-4">
-                                        <input type="number" id="mec_booking_form_upload_field_max_upload_size" name="mec[settings][upload_field_max_upload_size]" value="<?php echo ((isset($settings['upload_field_max_upload_size']) and trim($settings['upload_field_max_upload_size']) != '') ? $settings['upload_field_max_upload_size'] : ''); ?>" />
+                                <div id="mec_aweber_status_container_toggle" class="<?php if((isset($settings['aweber_status']) and !$settings['aweber_status']) or !isset($settings['aweber_status'])) echo 'mec-util-hidden'; ?>">
+                                    <div class="mec-form-row">
+                                        <label class="mec-col-3" for="mec_settings_aweber_list_id"><?php _e('List ID', 'modern-events-calendar-lite'); ?></label>
+                                        <div class="mec-col-4">
+                                            <input type="text" id="mec_settings_aweber_list_id" name="mec[settings][aweber_list_id]" value="<?php echo ((isset($settings['aweber_list_id']) and trim($settings['aweber_list_id']) != '') ? $settings['aweber_list_id'] : ''); ?>" />
+                                        </div>
                                     </div>
-                                    <p class="description"><?php echo __('The unit is Megabyte "MB"', 'modern-events-calendar-lite'); ?></p>
+                                    <p class="description"><?php echo sprintf(__("%s plugin should be installed and connected to your AWeber account.", 'modern-events-calendar-lite'), '<a href="https://wordpress.org/plugins/aweber-web-form-widget/" target="_blank">AWeber for WordPress</a>'); ?></p>
+                                    <p class="description"><?php echo sprintf(__('More information about the list ID can be found %s.', 'modern-events-calendar-lite'), '<a href="https://help.aweber.com/hc/en-us/articles/204028426" target="_blank">'.__('here', 'modern-events-calendar-lite').'</a>'); ?></p>
+                                </div>
+                            </div>
+
+                            <div id="mailpoet_option" class="mec-options-fields">
+                                <h4 class="mec-form-subtitle"><?php _e('MailPoet Integration', 'modern-events-calendar-lite'); ?></h4>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][mailpoet_status]" value="0" />
+                                        <input onchange="jQuery('#mec_mailpoet_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mailpoet_status]" <?php if(isset($settings['mailpoet_status']) and $settings['mailpoet_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable MailPoet Integration', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                                <div id="mec_mailpoet_status_container_toggle" class="<?php if((isset($settings['mailpoet_status']) and !$settings['mailpoet_status']) or !isset($settings['mailpoet_status'])) echo 'mec-util-hidden'; ?>">
+                                    <?php if(class_exists(\MailPoet\API\API::class)): $mailpoet_api = \MailPoet\API\API::MP('v1'); $mailpoets_lists = $mailpoet_api->getLists(); ?>
+                                    <div class="mec-form-row">
+                                        <label class="mec-col-3" for="mec_settings_mailpoet_list_id"><?php _e('List', 'modern-events-calendar-lite'); ?></label>
+                                        <div class="mec-col-4">
+                                            <select name="mec[settings][mailpoet_list_id]" id="mec_settings_mailpoet_list_id">
+                                                <option value="">-----</option>
+                                                <?php foreach($mailpoets_lists as $mailpoets_list): ?>
+                                                <option value="<?php echo $mailpoets_list['id']; ?>" <?php echo ((isset($settings['mailpoet_list_id']) and trim($settings['mailpoet_list_id']) == $mailpoets_list['id']) ? 'selected="selected"' : ''); ?>><?php echo $mailpoets_list['name']; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+                                    <p class="description"><?php echo sprintf(__("%s plugin should be installed and activated.", 'modern-events-calendar-lite'), '<a href="https://wordpress.org/plugins/mailpoet/" target="_blank">MailPoet</a>'); ?></p>
+                                </div>
+                            </div>
+
+                            <div id="sendfox_option" class="mec-options-fields">
+                                <h4 class="mec-form-subtitle"><?php _e('Sendfox Integration', 'modern-events-calendar-lite'); ?></h4>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][sendfox_status]" value="0" />
+                                        <input onchange="jQuery('#mec_sendfox_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][sendfox_status]" <?php if(isset($settings['sendfox_status']) and $settings['sendfox_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable Sendfox Integration', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                                <div id="mec_sendfox_status_container_toggle" class="<?php if((isset($settings['sendfox_status']) and !$settings['sendfox_status']) or !isset($settings['sendfox_status'])) echo 'mec-util-hidden'; ?>">
+
+                                    <?php if(function_exists('gb_sf4wp_get_lists')): $sendfox_lists = gb_sf4wp_get_lists(); ?>
+                                    <div class="mec-form-row">
+                                        <label class="mec-col-3" for="mec_settings_sendfox_list_id"><?php _e('List ID', 'modern-events-calendar-lite'); ?></label>
+                                        <div class="mec-col-4">
+                                            <select name="mec[settings][sendfox_list_id]" id="mec_settings_sendfox_list_id">
+                                                <?php foreach($sendfox_lists['result']['data'] as $sendfox_list): ?>
+                                                <option value="<?php echo $sendfox_list['id']; ?>" <?php echo ((isset($settings['sendfox_list_id']) and trim($settings['sendfox_list_id']) == $sendfox_list['id']) ? 'selected="selected"' : ''); ?>><?php echo $sendfox_list['name']; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+                                    <p class="description"><?php echo sprintf(__("%s plugin should be installed and connected to your Sendfox account.", 'modern-events-calendar-lite'), '<a href="https://wordpress.org/plugins/wp-sendfox/" target="_blank">WP Sendfox</a>'); ?></p>
                                 </div>
                             </div>
 

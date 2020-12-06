@@ -66,6 +66,9 @@ class MEC_feature_update extends MEC_base
         if(version_compare($version, '5.7.1', '<')) $this->version571();
         if(version_compare($version, '5.10.0', '<')) $this->version5100();
         if(version_compare($version, '5.11.0', '<')) $this->version5110();
+        if(version_compare($version, '5.12.6', '<')) $this->version5126();
+        if(version_compare($version, '5.13.5', '<')) $this->version5135();
+        if(version_compare($version, '5.14.0', '<')) $this->version5140();
 
         // Update to latest version to prevent running the code twice
         update_option('mec_version', $this->main->get_version());
@@ -416,14 +419,98 @@ class MEC_feature_update extends MEC_base
           `id` int(10) NOT NULL,
           `first_name` varchar(255) NOT NULL,
           `last_name` varchar(255) NOT NULL,
-          `email` varchar(255) NOT NULL,
+          `email` varchar(127) NOT NULL,
           `reg` TEXT NULL DEFAULT NULL,
           `created_at` datetime DEFAULT NULL,
           `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
         ) DEFAULT CHARSET=[:CHARSET:] COLLATE=[:COLLATE:];");
 
-        $this->db->q("ALTER TABLE `#__mec_users` ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `email` (`email`);");
+        $this->db->q("ALTER TABLE `#__mec_users` ADD PRIMARY KEY (`id`);");
         $this->db->q("ALTER TABLE `#__mec_users` MODIFY `id` int NOT NULL AUTO_INCREMENT;");
         $this->db->q("ALTER TABLE `#__mec_users` AUTO_INCREMENT=1000000;");
+        $this->db->q("ALTER TABLE `#__mec_users` ADD UNIQUE KEY `email` (`email`);");
+    }
+
+    public function version5126()
+    {
+        $all = $this->db->select("SELECT * FROM `#__mec_users`", 'loadAssocList');
+        $zeros = $this->db->select("SELECT * FROM `#__mec_users` WHERE `id`='0'", 'loadAssocList');
+
+        if(is_array($all) and !count($all))
+        {
+            $this->db->q("DROP TABLE `#__mec_users`");
+            $this->version5110();
+        }
+        elseif(is_array($zeros) and count($zeros))
+        {
+            $this->db->q("TRUNCATE `#__mec_users`");
+            $this->db->q("ALTER TABLE `#__mec_users` CHANGE `email` `email` VARCHAR(127) NOT NULL;");
+            $this->db->q("ALTER TABLE `#__mec_users` ADD PRIMARY KEY (`id`);");
+            $this->db->q("ALTER TABLE `#__mec_users` MODIFY `id` int NOT NULL AUTO_INCREMENT;");
+            $this->db->q("ALTER TABLE `#__mec_users` AUTO_INCREMENT=1000000;");
+            $this->db->q("ALTER TABLE `#__mec_users` ADD UNIQUE KEY `email` (`email`);");
+        }
+        else
+        {
+            $this->db->q("ALTER TABLE `#__mec_users` CHANGE `email` `email` VARCHAR(127) NOT NULL;");
+        }
+    }
+
+    public function version5135()
+    {
+        // Get current MEC options
+        $current = get_option('mec_options', array());
+        if(is_string($current) and trim($current) == '') $current = array();
+
+        // Merge new options with previous options
+        $current['notifications']['booking_rejection'] = array
+        (
+            'status'=>'0',
+            'subject'=>'Your booking got rejected!',
+            'recipients'=>'',
+            'send_to_admin'=>'0',
+            'send_to_organizer'=>'1',
+            'send_to_user'=>'1',
+            'content'=>"Hi %%name%%,
+
+            For your information, your booking for %%event_title%% at %%book_datetime%% is rejected.
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        $current['notifications']['event_soldout'] = array
+        (
+            'status'=>'0',
+            'subject'=>'Your event is soldout!',
+            'recipients'=>'',
+            'send_to_admin'=>'1',
+            'send_to_organizer'=>'1',
+            'content'=>"Hi %%name%%,
+
+            For your information, your %%event_title%% event at %%book_datetime%% is soldout.
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        // Update it only if options already exists.
+        if(get_option('mec_options') !== false)
+        {
+            // Save new options
+            update_option('mec_options', $current);
+        }
+    }
+
+    public function version5140()
+    {
+        $role = get_role('administrator');
+        $role->add_cap('mec_bookings', true);
+        $role->add_cap('mec_add_booking', true);
+        $role->add_cap('mec_coupons', true);
+        $role->add_cap('mec_report', true);
+        $role->add_cap('mec_import_export', true);
+        $role->add_cap('mec_settings', true);
+        $role->add_cap('mec_shortcodes', true);
     }
 }

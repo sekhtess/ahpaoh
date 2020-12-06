@@ -3,10 +3,11 @@
 defined('MECEXEC') or die();
 
 // Fix conflict between ACF and niceSelect
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
 if(is_plugin_active('advanced-custom-fields/acf.php')) remove_action('admin_footer', 'acf_enqueue_uploader', 5);
 if(is_plugin_active('advanced-custom-fields-pro/acf.php')) remove_action('admin_footer', 'acf_enqueue_uploader', 5);
-if(is_plugin_active('wp-recipe-maker/wp-recipe-maker.php')) remove_action('admin_footer', array( 'WPRM_Modal', 'add_modal_content' ));
+if(is_plugin_active('wp-recipe-maker/wp-recipe-maker.php')) remove_action('admin_footer', array('WPRM_Modal', 'add_modal_content'));
 
 // Skin Options
 $skins = $this->main->get_skins();
@@ -52,6 +53,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][list][start_date_type]" id="mec_skin_list_start_date_type" onchange="if(this.value === 'date') jQuery('#mec_skin_list_start_date_container').show(); else jQuery('#mec_skin_list_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_list['start_date_type']) and $sk_options_list['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -205,6 +208,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_list_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_list_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][list][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][list][display_categories]" id="mec_skin_list_display_categories" value="1" <?php if(isset($sk_options_list['display_categories']) and trim($sk_options_list['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_list_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('list', (isset($sk_options_list['display_organizer']) ? $sk_options_list['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
 					<div class="mec-col-4">
 						<label for="mec_skin_list_map_on_top"><?php _e('Show Map on top', 'modern-events-calendar-lite'); ?></label>
@@ -281,6 +299,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][grid][start_date_type]" id="mec_skin_grid_start_date_type" onchange="if(this.value === 'date') jQuery('#mec_skin_grid_start_date_container').show(); else jQuery('#mec_skin_grid_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_grid['start_date_type']) and $sk_options_grid['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -458,6 +478,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_grid_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_grid_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][grid][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][grid][display_categories]" id="mec_skin_grid_display_categories" value="1" <?php if(isset($sk_options_grid['display_categories']) and trim($sk_options_grid['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_grid_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('grid', (isset($sk_options_grid['display_organizer']) ? $sk_options_grid['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
 					<div class="mec-col-4">
 						<label for="mec_skin_grid_map_on_top"><?php _e('Show Map on top', 'modern-events-calendar-lite'); ?></label>
@@ -521,6 +556,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][agenda][start_date_type]" id="mec_skin_agenda_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_agenda_start_date_container').show(); else jQuery('#mec_skin_agenda_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_agenda['start_date_type']) and $sk_options_agenda['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -627,6 +664,7 @@ $events = $this->main->get_events();
                     <label class="mec-col-4" for="mec_skin_full_calendar_start_date_type"><?php _e('Start Date', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][full_calendar][start_date_type]" id="mec_skin_full_calendar_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_full_calendar_start_date_container').show(); else jQuery('#mec_skin_full_calendar_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_full_calendar['start_date_type']) and $sk_options_full_calendar['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_full_calendar['start_date_type']) and $sk_options_full_calendar['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_full_calendar['start_date_type']) and $sk_options_full_calendar['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_full_calendar['start_date_type']) and $sk_options_full_calendar['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_full_calendar['start_date_type']) and $sk_options_full_calendar['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -831,6 +869,7 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][yearly_view][start_date_type]" id="mec_skin_yearly_view_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_yearly_view_start_date_container').show(); else jQuery('#mec_skin_yearly_view_start_date_container').hide();">
                         <option value="start_current_year" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'start_current_year') echo 'selected="selected"'; ?>><?php _e('Start of Current Year', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_year" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'start_next_year') echo 'selected="selected"'; ?>><?php _e('Start of Next Year', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_year" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'start_last_year') echo 'selected="selected"'; ?>><?php _e('Start of Last Year', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
                     </select>
                     <div class="mec-col-4 <?php if(!isset($sk_options_yearly_view['start_date_type']) or (isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] != 'date')) echo 'mec-util-hidden'; ?>" id="mec_skin_yearly_view_start_date_container">
@@ -924,6 +963,7 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][monthly_view][start_date_type]" id="mec_skin_monthly_view_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_monthly_view_start_date_container').show(); else jQuery('#mec_skin_monthly_view_start_date_container').hide();">
                         <option value="start_current_month" <?php if(isset($sk_options_monthly_view['start_date_type']) and $sk_options_monthly_view['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_monthly_view['start_date_type']) and $sk_options_monthly_view['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_monthly_view['start_date_type']) and $sk_options_monthly_view['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_monthly_view['start_date_type']) and $sk_options_monthly_view['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
                     </select>
                     <div class="mec-col-4 <?php if(!isset($sk_options_monthly_view['start_date_type']) or (isset($sk_options_monthly_view['start_date_type']) and $sk_options_monthly_view['start_date_type'] != 'date')) echo 'mec-util-hidden'; ?>" id="mec_skin_monthly_view_start_date_container">
@@ -1009,6 +1049,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][map][start_date_type]" id="mec_skin_map_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_map_start_date_container').show(); else jQuery('#mec_skin_map_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_map['start_date_type']) and $sk_options_map['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -1054,6 +1096,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][daily_view][start_date_type]" id="mec_skin_daily_view_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_daily_view_start_date_container').show(); else jQuery('#mec_skin_daily_view_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_daily_view['start_date_type']) and $sk_options_daily_view['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -1113,6 +1157,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_daily_view_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_daily_view_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][daily_view][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][daily_view][display_categories]" id="mec_skin_daily_view_display_categories" value="1" <?php if(isset($sk_options_daily_view['display_categories']) and trim($sk_options_daily_view['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_daily_view_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('daily_view', (isset($sk_options_daily_view['display_organizer']) ? $sk_options_daily_view['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <p class="description"><?php _e('For showing next/previous month navigation.', 'modern-events-calendar-lite'); ?></p>
                 <?php echo $this->booking_button_field('daily_view', (isset($sk_options_daily_view['booking_button']) ? $sk_options_daily_view['booking_button'] : 0)); ?>
                 <?php echo $this->sed_method_field('daily_view', (isset($sk_options_daily_view['sed_method']) ? $sk_options_daily_view['sed_method'] : 0), (isset($sk_options_daily_view['image_popup']) ? $sk_options_daily_view['image_popup'] : 0)); ?>
@@ -1128,6 +1187,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][weekly_view][start_date_type]" id="mec_skin_weekly_view_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_weekly_view_start_date_container').show(); else jQuery('#mec_skin_weekly_view_start_date_container').hide();">
                         <option value="start_current_week" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'start_current_week') echo 'selected="selected"'; ?>><?php _e('Current Week', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_week" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'start_next_week') echo 'selected="selected"'; ?>><?php _e('Next Week', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_week" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'start_last_week') echo 'selected="selected"'; ?>><?php _e('Last Week', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_weekly_view['start_date_type']) and $sk_options_weekly_view['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -1176,6 +1237,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_weekly_view_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_weekly_view_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][weekly_view][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][weekly_view][display_categories]" id="mec_skin_weekly_view_display_categories" value="1" <?php if(isset($sk_options_weekly_view['display_categories']) and trim($sk_options_weekly_view['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_weekly_view_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('weekly_view', (isset($sk_options_weekly_view['display_organizer']) ? $sk_options_weekly_view['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
 					<div class="mec-col-4">
 						<label><?php _e('Next/Previous Buttons', 'modern-events-calendar-lite'); ?></label>
@@ -1214,6 +1290,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][timetable][start_date_type]" id="mec_skin_timetable_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_timetable_start_date_container').show(); else jQuery('#mec_skin_timetable_start_date_container').hide();">
                         <option value="start_current_week" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'start_current_week') echo 'selected="selected"'; ?>><?php _e('Current Week', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_week" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'start_next_week') echo 'selected="selected"'; ?>><?php _e('Next Week', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_week" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'start_last_week') echo 'selected="selected"'; ?>><?php _e('Last Week', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_timetable['start_date_type']) and $sk_options_timetable['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -1351,6 +1429,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][masonry][start_date_type]" id="mec_skin_masonry_start_date_type" onchange="if(this.value === 'date') jQuery('#mec_skin_masonry_start_date_container').show(); else jQuery('#mec_skin_masonry_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_masonry['start_date_type']) and $sk_options_masonry['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -1434,6 +1514,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_masonry_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_masonry_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][masonry][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][masonry][display_categories]" id="mec_skin_masonry_display_categories" value="1" <?php if(isset($sk_options_masonry['display_categories']) and trim($sk_options_masonry['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_masonry_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('masonry', (isset($sk_options_masonry['display_organizer']) ? $sk_options_masonry['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
                     <div class="mec-col-4">
                         <label><?php _e('Fit to row', 'modern-events-calendar-lite'); ?></label>
@@ -1752,6 +1847,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][carousel][start_date_type]" id="mec_skin_carousel_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_carousel_start_date_container').show(); else jQuery('#mec_skin_carousel_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_carousel['start_date_type']) and $sk_options_carousel['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -1808,9 +1905,29 @@ $events = $this->main->get_events();
                     <label class="mec-col-4" for="mec_skin_carousel_limit"><?php _e('Limit', 'modern-events-calendar-lite'); ?></label>
                     <input class="mec-col-4" type="number" name="mec[sk-options][carousel][limit]" id="mec_skin_carousel_limit" placeholder="<?php _e('eg. 6', 'modern-events-calendar-lite'); ?>" value="<?php if(isset($sk_options_carousel['limit'])) echo $sk_options_carousel['limit']; ?>" />
                 </div>
+                <div class="mec-form-row mec-switcher">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_carousel_autoplay_status"><?php _e('Auto Play', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][carousel][autoplay_status]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][carousel][autoplay_status]" id="mec_skin_carousel_autoplay_status" value="1" <?php if(!isset($sk_options_carousel['autoplay_status']) or (isset($sk_options_carousel['autoplay_status']) and trim($sk_options_carousel['autoplay_status']))) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_carousel_autoplay_status"></label>
+                    </div>
+                </div>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_carousel_autoplay"><?php _e('Auto Play Time', 'modern-events-calendar-lite'); ?></label>
                     <input class="mec-col-4" type="number" name="mec[sk-options][carousel][autoplay]" id="mec_skin_carousel_autoplay" placeholder="<?php _e('eg. 3000 default is 3 second', 'modern-events-calendar-lite'); ?>" value="<?php if(isset($sk_options_carousel['autoplay']) && $sk_options_carousel['autoplay'] != '' ) echo $sk_options_carousel['autoplay']; ?>" />
+                </div>
+                <div class="mec-form-row mec-switcher">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_carousel_loop_status"><?php _e('Loop', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][carousel][loop_status]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][carousel][loop_status]" id="mec_skin_carousel_loop_status" value="1" <?php if(!isset($sk_options_carousel['loop_status']) or (isset($sk_options_carousel['loop_status']) and trim($sk_options_carousel['loop_status']))) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_carousel_loop_status"></label>
+                    </div>
                 </div>
                 <?php echo $this->booking_button_field('carousel', (isset($sk_options_carousel['booking_button']) ? $sk_options_carousel['booking_button'] : 0)); ?>
                 <div class="mec-sed-methode-container">
@@ -1894,6 +2011,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][slider][start_date_type]" id="mec_skin_slider_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_slider_start_date_container').show(); else jQuery('#mec_skin_slider_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_slider['start_date_type']) and $sk_options_slider['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -2023,6 +2142,8 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][timeline][start_date_type]" id="mec_skin_timeline_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_timeline_start_date_container').show(); else jQuery('#mec_skin_timeline_start_date_container').hide();">
                         <option value="today" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php _e('Today', 'modern-events-calendar-lite'); ?></option>
                         <option value="tomorrow" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php _e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php _e('Yesterday', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_timeline['start_date_type']) and $sk_options_timeline['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
@@ -2095,6 +2216,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_timeline_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_timeline_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][timeline][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][timeline][display_categories]" id="mec_skin_timeline_display_categories" value="1" <?php if(isset($sk_options_timeline['display_categories']) and trim($sk_options_timeline['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_timeline_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('timeline', (isset($sk_options_timeline['display_organizer']) ? $sk_options_timeline['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
                     <div class="mec-col-4">
                         <label for="mec_skin_timeline_load_more_button"><?php _e('Load More Button', 'modern-events-calendar-lite'); ?></label>
@@ -2128,6 +2264,7 @@ $events = $this->main->get_events();
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][tile][start_date_type]" id="mec_skin_tile_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_tile_start_date_container').show(); else jQuery('#mec_skin_tile_start_date_container').hide();">
                         <option value="start_current_month" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php _e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php _e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
+                        <option value="start_last_month" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php _e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php _e('On a certain date', 'modern-events-calendar-lite'); ?></option>
                     </select>
                     <div class="mec-col-4 <?php if(!isset($sk_options_tile['start_date_type']) or (isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] != 'date')) echo 'mec-util-hidden'; ?>" id="mec_skin_tile_start_date_container">
@@ -2178,6 +2315,21 @@ $events = $this->main->get_events();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
+                <!-- Start Display Categories -->
+                <div class="mec-form-row mec-switcher" id="mec_skin_tile_display_categories_wp">
+                    <div class="mec-col-4">
+                        <label for="mec_skin_tile_display_categories"><?php _e('Display Categories', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-col-4">
+                        <input type="hidden" name="mec[sk-options][tile][display_categories]" value="0" />
+                        <input type="checkbox" name="mec[sk-options][tile][display_categories]" id="mec_skin_tile_display_categories" value="1" <?php if(isset($sk_options_tile['display_categories']) and trim($sk_options_tile['display_categories'])) echo 'checked="checked"'; ?> />
+                        <label for="mec_skin_tile_display_categories"></label>
+                    </div>
+                </div>
+                <!-- End Display Categories -->
+                <!-- Start Display Organizer -->
+                <?php echo $this->display_organizer_field('tile', (isset($sk_options_tile['display_organizer']) ? $sk_options_tile['display_organizer'] : 0)); ?>
+                <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
                     <div class="mec-col-4">
                         <label><?php _e('Next/Previous Buttons', 'modern-events-calendar-lite'); ?></label>

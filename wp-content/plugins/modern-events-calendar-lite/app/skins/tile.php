@@ -183,7 +183,7 @@ class MEC_skin_tile extends MEC_skins
         else
         {
             $start = $this->start_date;
-            $end = ($this->load_method === 'month' ? date('Y-m-t', strtotime($this->start_date)) : date('Y-m-t', strtotime('+10 Year', strtotime($start))));
+            $end = ($this->load_method === 'month' ? date('Y-m-t', strtotime($this->start_date)) : date('Y-m-t', strtotime('+15 Years', strtotime($start))));
         }
 
         // Date Events
@@ -296,6 +296,7 @@ class MEC_skin_tile extends MEC_skins
         
         if(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_current_month') $date = date('Y-m-d', strtotime('first day of this month'));
         elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_next_month') $date = date('Y-m-d', strtotime('first day of next month'));
+        elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_last_month') $date = date('Y-m-d', strtotime('first day of last month'));
         elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'date') $date = date('Y-m-d', strtotime($this->skin_options['start_date']));
         
         // Hide past events

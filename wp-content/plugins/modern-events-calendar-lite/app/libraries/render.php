@@ -275,7 +275,7 @@ class MEC_render extends MEC_base
      */
     public function vcustom($atts)
     {
-        if(isset($this->settings['custom_archive']) && !empty($this->settings['custom_archive'])) echo do_shortcode( $this->settings['custom_archive'] );
+        if(isset($this->settings['custom_archive']) && !empty($this->settings['custom_archive'])) return do_shortcode($this->settings['custom_archive']);
     }
     
     /**
@@ -381,6 +381,19 @@ class MEC_render extends MEC_base
         $grid_skin = (isset($this->settings['grid_category_skin']) and trim($this->settings['grid_category_skin']) != '') ? $this->settings['grid_category_skin'] : 'classic';
         $timetable_skin = (isset($this->settings['timetable_category_skin']) and trim($this->settings['timetable_category_skin']) != '') ? $this->settings['timetable_category_skin'] : 'modern';
 
+        if($skin == 'custom')
+        {
+            $category_custom_shortcode = (isset($this->settings['custom_archive_category']) and trim($this->settings['custom_archive_category']) != '') ? trim(stripslashes($this->settings['custom_archive_category'])) : '';
+            $category_custom_shortcode = str_replace(']', ' ]', $category_custom_shortcode);
+            $shortcode_params = shortcode_parse_atts($category_custom_shortcode);
+
+            if(is_array($shortcode_params) and isset($shortcode_params['id']))
+            {
+                $atts = $this->parse($shortcode_params['id'], $atts);
+                $skin = isset($atts['skin']) ? $atts['skin'] : '';
+            }
+        }
+
         if($skin == 'full_calendar') $content = $this->vfull($atts);
         elseif($skin == 'yearly_view') $content = $this->vyear($atts);
         elseif($skin == 'masonry') $content = $this->vmasonry($atts);
@@ -485,6 +498,7 @@ class MEC_render extends MEC_base
         // All Meta Data
         $meta = $this->main->get_post_meta($post_id);
         if(isset($meta['mec_notifications'])) unset($meta['mec_notifications']);
+        if(isset($meta['mec_fees']) and is_array($meta['mec_fees']) and isset($meta['mec_fees'][':i:'])) unset($meta['mec_fees'][':i:']);
 
         $data->meta = $meta;
         
@@ -551,7 +565,7 @@ class MEC_render extends MEC_base
 
         $data->hourly_schedules = $hourly_schedules;
 
-        $data->tickets = isset($meta['mec_tickets']) ? $meta['mec_tickets'] : array();
+        $data->tickets = ((isset($meta['mec_tickets']) and is_array($meta['mec_tickets'])) ? $meta['mec_tickets'] : array());
         $data->color = isset($meta['mec_color']) ? $meta['mec_color'] : '';
         $data->permalink = ((isset($meta['mec_read_more']) and filter_var($meta['mec_read_more'], FILTER_VALIDATE_URL)) ? $meta['mec_read_more'] : get_post_permalink($post_id));
         
@@ -583,14 +597,14 @@ class MEC_render extends MEC_base
 
         // Featured image URLs
         $dataFeaturedImage = apply_filters('mec-render-data-featured-image', array(
-            'thumbnail'=>esc_url(get_the_post_thumbnail_url($post_id, 'thumbnail')),
-            'thumblist'=>esc_url(get_the_post_thumbnail_url($post_id, 'thumblist' )),
-            'gridsquare'=>esc_url(get_the_post_thumbnail_url($post_id, 'gridsquare' )),
-            'meccarouselthumb'=>esc_url(get_the_post_thumbnail_url($post_id, 'meccarouselthumb')),
-            'medium'=>esc_url(get_the_post_thumbnail_url($post_id, 'medium')),
-            'large'=>esc_url(get_the_post_thumbnail_url($post_id, 'large')),
-            'full'=>esc_url(get_the_post_thumbnail_url($post_id, 'full')),
-            'tileview'=>esc_url(get_the_post_thumbnail_url($post_id, 'tileview'))
+            'thumbnail'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'thumbnail')),
+            'thumblist'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'thumblist' )),
+            'gridsquare'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'gridsquare' )),
+            'meccarouselthumb'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'meccarouselthumb')),
+            'medium'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'medium')),
+            'large'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'large')),
+            'full'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'full')),
+            'tileview'=>esc_url($this->main->get_post_thumbnail_url($post_id, 'tileview'))
         ), $post_id);
         $data->featured_image = $dataFeaturedImage;
 
@@ -812,6 +826,8 @@ class MEC_render extends MEC_base
                 {
                     $new_start_time = $this->main->get_time(0);
                     $new_end_time = $this->main->get_time((24*3600));
+
+                    $allday = 1;
                 }
                 // First Day
                 else
@@ -1060,7 +1076,7 @@ class MEC_render extends MEC_base
                 $event_months = explode(',', trim($event->mec->month, ', '));
                 
                 $event_start_day = $event_days[0];
-                $event_period_days = ($this->main->date_diff($start_date['date'], $end_date['date']))->days;
+                $event_period_days = $this->main->date_diff($start_date['date'], $end_date['date'])->days;
 
                 $found = 0;
                 $i = 0;
@@ -1347,6 +1363,8 @@ class MEC_render extends MEC_base
         
         foreach($events as $event)
         {
+            if(!is_object($event)) continue;
+
             $location = isset($event->data->locations[$event->data->meta['mec_location_id']]) ? $event->data->locations[$event->data->meta['mec_location_id']] : array();
             
             $latitude = isset($location['latitude']) ? $location['latitude'] : '';
@@ -1406,9 +1424,9 @@ class MEC_render extends MEC_base
         $start['timestamp'] = strtotime($start_time);
         $end['timestamp'] = strtotime($end_time);
 
-        $allday = isset($date['allday']) ? $date['allday'] : 0;
-        $hide_time = isset($date['hide_time']) ? $date['hide_time'] : 0;
-        $past = isset($date['past']) ? $date['past'] : 0;
+        $allday = (isset($date['allday']) ? $date['allday'] : 0);
+        $hide_time = (isset($date['hide_time']) ? $date['hide_time'] : 0);
+        $past = (isset($date['past']) ? $date['past'] : 0);
 
         return array(
             'start' => $start,

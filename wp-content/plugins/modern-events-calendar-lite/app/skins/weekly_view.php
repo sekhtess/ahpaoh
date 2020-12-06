@@ -162,12 +162,12 @@ class MEC_skin_weekly_view extends MEC_skins
         if($this->show_only_expired_events)
         {
             $start =  date('Y-m-d H:i:s', current_time('timestamp', 0));
-            $end = $this->start_date;
+            $end = $this->main->array_key_first($this->week_of_days);
         }
         else
         {
-            $start = $this->start_date;
-            $end = date('Y-m-t', strtotime($this->start_date));
+            $start = $this->main->array_key_first($this->week_of_days);
+            $end = $this->maximum_date ? $this->maximum_date : $this->main->array_key_last($this->week_of_days);
         }
 
         // Date Events
@@ -183,7 +183,8 @@ class MEC_skin_weekly_view extends MEC_skins
             $s = date('Y-m-d', strtotime('+1 Day', strtotime($s)));
         }
 
-        $dates = $sorted;
+        $dates = array_merge($sorted, $dates);
+        uksort($dates, array($this, 'sort_dates'));
 
         // Limit
         $this->args['posts_per_page'] = $this->limit;
@@ -285,6 +286,8 @@ class MEC_skin_weekly_view extends MEC_skins
             else $date = date('Y-m-d', strtotime('Last '.$weekdays[0]));
         }
         elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_next_week') $date = date('Y-m-d', strtotime('Next '.$weekdays[0]));
+        elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_last_week') $date = date('Y-m-d', strtotime('Last '.$weekdays[0]));
+        elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_last_month') $date = date('Y-m-d', strtotime('first day of last month'));
         elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_current_month') $date = date('Y-m-d', strtotime('first day of this month'));
         elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'start_next_month') $date = date('Y-m-d', strtotime('first day of next month'));
         elseif(isset($this->skin_options['start_date_type']) and $this->skin_options['start_date_type'] == 'date') $date = date('Y-m-d', strtotime($this->skin_options['start_date']));

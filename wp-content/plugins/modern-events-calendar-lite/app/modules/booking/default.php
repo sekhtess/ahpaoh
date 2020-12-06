@@ -186,7 +186,7 @@ function mec_book_form_submit'.$uniqueid.'()
     {
         var valid = true;
 
-        jQuery("#mec_book_form'.$uniqueid.' .mec-book-ticket-container .mec-book-field-name.mec-reg-mandatory").filter(":visible").each(function(i)
+        jQuery("#mec_book_form'.$uniqueid.' .mec-book-ticket-container .mec-book-reg-field-mec_email.mec-reg-mandatory").filter(":visible").each(function(i)
         {
             var ticket_id = jQuery(this).data("ticket-id");
 
@@ -198,7 +198,7 @@ function mec_book_form_submit'.$uniqueid.'()
             else jQuery(this).removeClass("mec-red-notification");
         });
 
-        jQuery("#mec_book_form'.$uniqueid.' .mec-book-ticket-container .mec-book-field-email.mec-reg-mandatory").filter(":visible").each(function(i)
+        jQuery("#mec_book_form'.$uniqueid.' .mec-book-ticket-container .mec-book-reg-field-name.mec-reg-mandatory").filter(":visible").each(function(i)
         {
             var ticket_id = jQuery(this).data("ticket-id");
 
@@ -367,6 +367,17 @@ function mec_book_form_submit'.$uniqueid.'()
             var field_id = jQuery(this).data("field-id");
 
             if(!jQuery("#mec_book_form'.$uniqueid.' textarea[name=\'book[fields]["+field_id+"]\']").val())
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+            }
+            else jQuery(this).removeClass("mec-red-notification");
+        });
+        
+        // Manual Username and Password
+        jQuery("#mec_book_form'.$uniqueid.' #mec_book_form_username, #mec_book_form'.$uniqueid.' #mec_book_form_password").filter(":visible").each(function(i)
+        {
+            if(!jQuery(this).val())
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");

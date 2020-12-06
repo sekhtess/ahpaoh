@@ -85,6 +85,7 @@ class MEC_feature_mec extends MEC_base
         $this->factory->action('mec_booking_confirmed', array($this->main, 'bp_add_activity'), 10);
         $this->factory->action('mec_booking_verified', array($this->main, 'bp_add_activity'), 10);
         $this->factory->action('bp_register_activity_actions', array($this->main, 'bp_register_activity_actions'), 10);
+        $this->factory->action('bp_setup_nav', array($this->main, 'bp_add_profile_menu'));
 
         // Mailchimp Integration
         $this->factory->action('mec_booking_verified', array($this->main, 'mailchimp_add_subscriber'), 10);
@@ -101,15 +102,26 @@ class MEC_feature_mec extends MEC_base
         // Active Campaign Integration
         $this->factory->action('mec_booking_verified', array($this->main, 'active_campaign_add_subscriber'), 10);
 
+        // AWeber Integration
+        $this->factory->action('mec_booking_verified', array($this->main, 'aweber_add_subscriber'), 10);
+
+        // MailPoet Integration
+        $this->factory->action('mec_booking_verified', array($this->main, 'mailpoet_add_subscriber'), 10);
+
+        // Sendfox Integration
+        $this->factory->action('mec_booking_verified', array($this->main, 'sendfox_add_subscriber'), 10);
+
         // MEC Notifications
         $this->factory->action('mec_booking_completed', array($this->notifications, 'email_verification'), 10);
         $this->factory->action('mec_booking_completed', array($this->notifications, 'booking_notification'), 11);
         $this->factory->action('mec_booking_completed', array($this->notifications, 'admin_notification'), 12);
         $this->factory->action('mec_booking_confirmed', array($this->notifications, 'booking_confirmation'), 10, 2);
         $this->factory->action('mec_booking_canceled', array($this->notifications, 'booking_cancellation'), 12);
+        $this->factory->action('mec_booking_rejected', array($this->notifications, 'booking_rejection'), 12);
         $this->factory->action('mec_fes_added', array($this->notifications, 'new_event'), 50, 2);
         $this->factory->action('mec_after_publish_admin_event', array($this->notifications, 'new_event'), 10, 2);
         $this->factory->action('mec_event_published', array($this->notifications, 'user_event_publishing'), 10, 3);
+        $this->factory->action('mec_event_soldout', array($this->notifications, 'event_soldout'), 10, 2);
 
         $this->page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'MEC-settings';
 
@@ -152,6 +164,9 @@ class MEC_feature_mec extends MEC_base
 
         // Dashborad Metaboxes
         add_action('wp_dashboard_setup', array($this, 'dashboard_widgets'));
+
+        // Dashborad Metabox Total Bookingajax
+        add_action('wp_ajax_total-booking-get-reports',array($this, 'dashboard_widget_total_booking_ajax_handler'));
     }
 
     /* Activate License */
@@ -195,7 +210,7 @@ class MEC_feature_mec extends MEC_base
     public function download_settings()
     {
         // Current User is not Permitted
-        if(!current_user_can('manage_options')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!current_user_can('mec_settings')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
 
         if(!wp_verify_nonce($_REQUEST['nonce'], 'mec_settings_download'))
         {
@@ -219,12 +234,9 @@ class MEC_feature_mec extends MEC_base
     public function close_notification()
     {
         // Current User is not Permitted
-        if(!current_user_can('manage_options')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!current_user_can('mec_settings')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!wp_verify_nonce( $_REQUEST['nonce'], 'mec_settings_nonce')) exit();
 
-        if(!wp_verify_nonce( $_REQUEST['nonce'], 'mec_settings_nonce'))
-        {
-            exit();
-        }
         update_option('mec_addons_notification_option', 'open');
         wp_die();
     }
@@ -233,12 +245,9 @@ class MEC_feature_mec extends MEC_base
     public function close_cmsg_2_notification()
     {
         // Current User is not Permitted
-        if(!current_user_can('manage_options')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!current_user_can('mec_settings')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!wp_verify_nonce( $_REQUEST['nonce'], 'mec_settings_nonce')) exit();
 
-        if(!wp_verify_nonce( $_REQUEST['nonce'], 'mec_settings_nonce'))
-        {
-            exit();
-        }
         update_option('mec_custom_msg_2_close_option', 'open');
         wp_die();
     }
@@ -247,12 +256,9 @@ class MEC_feature_mec extends MEC_base
     public function close_cmsg_notification()
     {
         // Current User is not Permitted
-        if(!current_user_can('manage_options')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!current_user_can('mec_settings')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!wp_verify_nonce( $_REQUEST['nonce'], 'mec_settings_nonce')) exit();
 
-        if(!wp_verify_nonce( $_REQUEST['nonce'], 'mec_settings_nonce'))
-        {
-            exit();
-        }
         update_option('mec_custom_msg_close_option', 'open');
         wp_die();
     }
@@ -262,12 +268,8 @@ class MEC_feature_mec extends MEC_base
     public function report_event_dates()
     {
         // Current User is not Permitted
-        if(!current_user_can('manage_options')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
-
-        if(!wp_verify_nonce($_REQUEST['nonce'], 'mec_settings_nonce'))
-        {
-            exit();
-        }
+        if(!current_user_can('mec_report')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!wp_verify_nonce($_REQUEST['nonce'], 'mec_settings_nonce')) exit();
 
         $event_id = $_POST['event_id'];
         $feature_class = new MEC_feature_mec();
@@ -307,7 +309,7 @@ class MEC_feature_mec extends MEC_base
                     'ampm' => date('A', $date->tend),
                 );
 
-                echo '<option value="'.$date->tstart.'" '.($occurrence == $date->tstart ? 'class="selected-day"' : '').'>'.strip_tags($this->main->date_label($start, $end, $date_format)).'</option>';
+                echo '<option value="'.$date->tstart.'" '.($occurrence == $date->tstart ? 'class="selected-day"' : '').'>'.strip_tags($this->main->date_label($start, $end, $date_format, ' - ', false)).'</option>';
             }
 
             echo '</select>';
@@ -324,12 +326,8 @@ class MEC_feature_mec extends MEC_base
     public function import_settings()
     {
         // Current User is not Permitted
-        if(!current_user_can('manage_options')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
-
-        if(!wp_verify_nonce($_REQUEST['nonce'], 'mec_settings_nonce'))
-        {
-            exit();
-        }
+        if(!current_user_can('mec_settings')) $this->main->response(array('success'=>0, 'code'=>'ADMIN_ONLY'));
+        if(!wp_verify_nonce($_REQUEST['nonce'], 'mec_settings_nonce')) exit();
 
         $options = $_REQUEST['content'];
         if($options == 'No-JSON')
@@ -469,13 +467,13 @@ class MEC_feature_mec extends MEC_base
             add_submenu_page('mec-intro', $this->main->m('taxonomy_speakers', __('Speakers', 'modern-events-calendar-lite')), $this->main->m('taxonomy_speakers', __('Speakers', 'modern-events-calendar-lite')), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_speaker&post_type='.$this->PT);
         }
 
-        add_submenu_page('mec-intro', __('Shortcodes', 'modern-events-calendar-lite'), __('Shortcodes', 'modern-events-calendar-lite'), 'edit_others_posts', 'edit.php?post_type=mec_calendars');
-        add_submenu_page('mec-intro', __('MEC - Settings', 'modern-events-calendar-lite'), __('Settings', 'modern-events-calendar-lite'), 'manage_options', 'MEC-settings', array($this, 'page'));
+        add_submenu_page('mec-intro', __('Shortcodes', 'modern-events-calendar-lite'), __('Shortcodes', 'modern-events-calendar-lite'), 'mec_shortcodes', 'edit.php?post_type=mec_calendars');
+        add_submenu_page('mec-intro', __('MEC - Settings', 'modern-events-calendar-lite'), __('Settings', 'modern-events-calendar-lite'), 'mec_settings', 'MEC-settings', array($this, 'page'));
         add_submenu_page('mec-intro', __('MEC - Addons', 'modern-events-calendar-lite'), __('Addons', 'modern-events-calendar-lite'), 'manage_options', 'MEC-addons', array($this, 'addons'));
 
         if(isset($this->settings['booking_status']) and $this->settings['booking_status'])
         {
-            add_submenu_page('mec-intro', __('MEC - Report', 'modern-events-calendar-lite'), __('Report', 'modern-events-calendar-lite'), 'manage_options', 'MEC-report', array($this, 'report'));
+            add_submenu_page('mec-intro', __('MEC - Report', 'modern-events-calendar-lite'), __('Report', 'modern-events-calendar-lite'), 'mec_report', 'MEC-report', array($this, 'report'));
         }
 
         if(!$this->getPRO()) add_submenu_page('mec-intro', __('MEC - Go Pro', 'modern-events-calendar-lite'), __('Go Pro', 'modern-events-calendar-lite'), 'manage_options', 'MEC-go-pro', array($this, 'go_pro'));
@@ -512,7 +510,24 @@ class MEC_feature_mec extends MEC_base
                 'exclude_from_search'=>true,
                 'publicly_queryable'=>$elementor,
                 'show_in_menu'=>'mec-intro',
-                'supports'=>array('title')
+                'supports'=>array('title'),
+                'capabilities'=>array
+                (
+                    'read_post'=>'mec_shortcodes',
+                    'edit_post'=>'mec_shortcodes',
+                    'delete_post'=>'mec_shortcodes',
+                    'edit_others_posts'=>'mec_shortcodes',
+                    'publish_posts'=>'mec_shortcodes',
+                    'read_private_posts'=>'mec_shortcodes',
+                    'read'=>'mec_shortcodes',
+                    'delete_posts'=>'mec_shortcodes',
+                    'delete_private_posts'=>'mec_shortcodes',
+                    'delete_published_posts'=>'mec_shortcodes',
+                    'delete_others_posts'=>'mec_shortcodes',
+                    'edit_private_posts'=>'mec_shortcodes',
+                    'edit_published_posts'=>'mec_shortcodes',
+                    'create_posts'=>'mec_shortcodes'
+                ),
             )
         );
 
@@ -587,7 +602,7 @@ class MEC_feature_mec extends MEC_base
         $tags = (isset($terms['mec_tag'])) ? explode(',', trim($terms['mec_tag'])) : '';
         $authors = (isset($terms['mec_author']) and is_array($terms['mec_author'])) ? implode(',', $terms['mec_author']) : '';
 
-        // Fox tags
+        // Fix tags
         if(is_array($tags) and count($tags) == 1 and trim($tags[0]) == '') $tags = array();
         if(is_array($tags))
         {
@@ -604,7 +619,17 @@ class MEC_feature_mec extends MEC_base
 
         do_action('mec_shortcode_filters_save', $post_id, $terms );
 
-        $mec = isset($_POST['mec']) ? $_POST['mec'] : array();
+        $mec = (isset($_POST['mec']) ? $_POST['mec'] : array());
+
+        $skin = (isset($mec['skin']) ? $mec['skin'] : '');
+        $start_date_type = ((isset($mec['sk-options'][$skin]) and isset($mec['sk-options'][$skin]['start_date_type'])) ? $mec['sk-options'][$skin]['start_date_type'] : 'today');
+
+        $ongoing = ((isset($mec['show_only_ongoing_events']) and $mec['show_only_ongoing_events']) ? 1 : 0);
+
+        // Set start date to Today because of showing ongoing events
+        if($ongoing and in_array($skin, array('list', 'grid', 'agenda', 'timeline'))) $mec['sk-options'][$skin]['start_date_type'] = 'today';
+        // Enable "Show Past Events" option since the start date is past
+        elseif(in_array($start_date_type, array('yesterday', 'start_last_year', 'start_last_month', 'start_last_week'))) $mec['show_past_events'] = 1;
 
         foreach($mec as $key=>$value) update_post_meta($post_id, $key, $value);
     }
@@ -974,12 +999,13 @@ class MEC_feature_mec extends MEC_base
             <div class="mec-col-4">
                 <label for="mec_skin_'.$skin.'_sed_method">'.__('Single Event Display Method', 'modern-events-calendar-lite').'</label>
             </div>
-            <div class="mec-col-4">
+            <div class="mec-col-8">
                 <input type="hidden" name="mec[sk-options]['.$skin.'][sed_method]" value="'.$value.'" id="mec_skin_'.$skin.'_sed_method_field" />
                 <ul class="mec-sed-methods" data-for="#mec_skin_'.$skin.'_sed_method_field">
                     <li data-method="0" class="'.(!$value ? 'active' : '').'">'.__('Current Window', 'modern-events-calendar-lite').'</li>
                     <li data-method="new" class="'.($value === 'new' ? 'active' : '').'">'.__('New Window', 'modern-events-calendar-lite').'</li>
                     <li data-method="m1" class="'.($value === 'm1' ? 'active' : '').'">'.__('Modal Popup', 'modern-events-calendar-lite').'</li>
+                    <li data-method="no" class="'.($value === 'no' ? 'active' : '').'">'.__('Disable Link', 'modern-events-calendar-lite').'</li>
                 </ul>
             </div>
         </div>' . $image_popup_html;
@@ -997,6 +1023,19 @@ class MEC_feature_mec extends MEC_base
             <div class="mec-col-4">
                 <input type="hidden" name="mec[sk-options]['.$skin.'][booking_button]" value="0" />
                 <input type="checkbox" name="mec[sk-options]['.$skin.'][booking_button]" id="mec_skin_'.$skin.'_booking_button" value="1" '.($value == '1' ? 'checked="checked"' : '').' /><label for="mec_skin_'.$skin.'_booking_button"></label>
+            </div>
+        </div>';
+    }
+
+    public function display_organizer_field($skin, $value = 0)
+    {
+        return '<div class="mec-form-row mec-display-organizer-wrap mec-switcher">
+            <div class="mec-col-4">
+                <label for="mec_skin_'.$skin.'_display_organizer">'.__('Display Organizers', 'modern-events-calendar-lite').'</label>
+            </div>
+            <div class="mec-col-4">
+                <input type="hidden" name="mec[sk-options]['.$skin.'][display_organizer]" value="0" />
+                <input type="checkbox" name="mec[sk-options]['.$skin.'][display_organizer]" id="mec_skin_'.$skin.'_display_organizer" value="1" '.($value == '1' ? 'checked="checked"' : '').' /><label for="mec_skin_'.$skin.'_display_organizer"></label>
             </div>
         </div>';
     }
@@ -1139,24 +1178,18 @@ class MEC_feature_mec extends MEC_base
      */
     public function dashboard_widgets()
     {
-        add_meta_box(
+        wp_add_dashboard_widget(
             'mec_widget_news_features',
             __('Modern Events Calendar', 'modern-events-calendar-lite'),
-            array($this, 'widget_news'),
-            'dashboard',
-            'normal',
-            'high'
+            array($this, 'widget_news')
         );
 
-        if($this->getPRO())
+        if ($this->getPRO())
         {
-            add_meta_box(
+            wp_add_dashboard_widget(
                 'mec_widget_total_bookings',
                 __('Total Bookings', 'modern-events-calendar-lite'),
-                array($this, 'widget_total_bookings'),
-                'dashboard',
-                'normal',
-                'high'
+                array($this, 'widget_total_bookings')
             );
         }
     }
@@ -1251,11 +1284,77 @@ class MEC_feature_mec extends MEC_base
         echo '<div class="mec-metabox-footer"><a href="https://webnus.net/blog/" target="_blank">'.esc_html__('Blog', 'modern-events-calendar-lite').'<span aria-hidden="true" class="dashicons dashicons-external"></span></a><a href="https://webnus.net/dox/modern-events-calendar/" target="_blank">'.esc_html__('Help', 'modern-events-calendar-lite').'<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
         if($this->getPRO()) echo '<a href="https://webnus.net/mec-purchase" target="_blank">'.esc_html__('Go Pro', 'modern-events-calendar-lite').'<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
         echo '</div>';
+    }       
+
+    public function dashboard_widget_total_booking_ajax_handler()
+    {       
+
+        $start = isset($_REQUEST['start']) ? sanitize_text_field($_REQUEST['start']) : date('Y-m-d', strtotime('-15 days'));
+        $end = isset($_REQUEST['end']) ? sanitize_text_field($_REQUEST['end']) : date('Y-m-d');
+        $type = isset($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : 'daily';
+        $chart = isset($_REQUEST['chart']) ? sanitize_text_field($_REQUEST['chart']) : 'bar';        
+
+        
+        ob_start();
+            $this->display_total_booking_chart($start,$end,$type,$chart);
+        $r = ob_get_clean();
+        wp_send_json($r);
+    }
+
+    public function display_total_booking_chart($start,$end,$type = 'daily' ,$chart = 'bar')
+    {
+        $start = !empty($start) ? $start : date('Y-m-d', strtotime('-15 days'));
+        $end = !empty($end) ? $end : date('Y-m-d');
+
+        $periods = $this->main->get_date_periods($start, $end, $type);
+
+        $stats = '';
+        $labels = '';
+        foreach($periods as $period)
+        {
+            $post_type = $this->main->get_book_post_type();
+            $posts_ids = $this->db->select("SELECT `ID` FROM `#__posts` WHERE `post_type`='".$post_type."' AND `post_date`>='".$period['start']."' AND `post_date`<='".$period['end']."'", 'loadColumn');
+
+            if(count($posts_ids)) $total_sells = $this->db->select("SELECT SUM(`meta_value`) FROM `#__postmeta` WHERE `meta_key`='mec_price' AND `post_id` IN (".implode(',', $posts_ids).")", 'loadResult');
+            else $total_sells = 0;
+
+            $labels .= '"'.$period['label'].'",';
+            $stats .= $total_sells.',';
+        }
+
+        $currency = $this->main->get_currency_sign();
+        echo '<canvas id="mec_total_bookings_chart" width="600" height="300"></canvas>';
+        echo '<script type="text/javascript">
+            jQuery(document).ready(function()
+            {
+                var ctx = document.getElementById("mec_total_bookings_chart");
+                var mecSellsChart = new Chart(ctx,
+                {
+                    type: "'.$chart.'",
+                    data:
+                    {
+                        labels: ['.trim($labels, ', ').'],
+                        datasets: [
+                        {
+                            label: "'.esc_js(sprintf(__('Total Sells (%s)', 'modern-events-calendar-lite'), $currency)).'",
+                            data: ['.trim($stats, ', ').'],
+                            backgroundColor: "rgba(159, 216, 255, 0.3)",
+                            borderColor: "#36A2EB",
+                            borderWidth: 1
+                        }]
+                    }
+                });
+            });
+        </script>';
     }
 
     public function widget_total_bookings()
     {
         wp_enqueue_script('mec-chartjs-script', $this->main->asset('js/chartjs.min.js'));
+        wp_enqueue_script('mec-total-booking-reports-script', $this->main->asset('js/total-booking-reports.js'));
+        wp_localize_script('mec-total-booking-reports-script','mec_ajax_data',array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+        ));
         $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         ?>
         <div class="w-row <?php echo (($current_page == 'dashboard') ? 'mec-dashboard-widget-total-bookings' : ''); ?>">
@@ -1265,29 +1364,6 @@ class MEC_feature_mec extends MEC_base
                         <?php echo esc_html__('Total Bookings', 'modern-events-calendar-lite'); ?>
                     </div>
                     <div class="w-box-content">
-                        <?php
-                        $start = isset($_GET['start']) ? sanitize_text_field($_GET['start']) : date('Y-m-d', strtotime('-15 days'));
-                        $end = isset($_GET['end']) ? sanitize_text_field($_GET['end']) : date('Y-m-d');
-                        $type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'daily';
-                        $chart = isset($_GET['chart']) ? sanitize_text_field($_GET['chart']) : 'bar';
-
-                        $periods = $this->main->get_date_periods($start, $end, $type);
-
-                        $stats = '';
-                        $labels = '';
-                        foreach($periods as $period)
-                        {
-                            $posts_ids = $this->db->select("SELECT `ID` FROM `#__posts` WHERE `post_type`='".$this->main->get_book_post_type()."' AND `post_date`>='".$period['start']."' AND `post_date`<='".$period['end']."'", 'loadColumn');
-
-                            if(count($posts_ids)) $total_sells = $this->db->select("SELECT SUM(`meta_value`) FROM `#__postmeta` WHERE `meta_key`='mec_price' AND `post_id` IN (".implode(',', $posts_ids).")", 'loadResult');
-                            else $total_sells = 0;
-
-                            $labels .= '"'.$period['label'].'",';
-                            $stats .= $total_sells.',';
-                        }
-
-                        $currency = $this->main->get_currency_sign();
-                        ?>
                         <ul>
                             <li class="mec-chart-this-month"><a href="<?php echo add_query_arg(array(
                                 'sort' => 'this_month',
@@ -1318,14 +1394,14 @@ class MEC_feature_mec extends MEC_base
                                 'chart' => $chart,
                             )); ?>"><?php _e('Last Year', 'modern-events-calendar-lite'); ?></a></li>
                         </ul>
-                        <script>
-                            jQuery(document).ready(function($) {
-                                if(window.location.href.indexOf("page=mec-intro&sort=this_month") >= 0) jQuery('.mec-chart-this-month').addClass('active')
-                                if(window.location.href.indexOf("page=mec-intro&sort=last_month") >= 0) jQuery('.mec-chart-last-month').addClass('active')
-                                if(window.location.href.indexOf("page=mec-intro&sort=this_year") >= 0) jQuery('.mec-chart-this-year').addClass('active')
-                                if(window.location.href.indexOf("page=mec-intro&sort=last_year") >= 0) jQuery('.mec-chart-last-year').addClass('active')
-                            });
+                        <script>                        
                         </script>
+                        <?php
+                            $start = date('Y-m-d', strtotime('-15 days'));
+                            $end = date('Y-m-d');
+                            $type = 'daily';
+                            $chart = 'bar';
+                        ?>
                         <form class="mec-sells-filter" method="GET" action="">
                             <?php if($current_page != 'dashboard'): ?><input type="hidden" name="page" value="mec-intro" /><?php endif; ?>
                             <input type="text" class="mec_date_picker" name="start" placeholder="<?php esc_attr_e('Start Date', 'modern-events-calendar-lite'); ?>" value="<?php echo $start; ?>" />
@@ -1341,31 +1417,11 @@ class MEC_feature_mec extends MEC_base
                             </select>
                             <button type="submit"><?php _e('Filter', 'modern-events-calendar-lite'); ?></button>
                         </form>
-                        <?php
-                        echo '<canvas id="mec_total_bookings_chart" width="600" height="300"></canvas>';
-                        echo '<script type="text/javascript">
-                            jQuery(document).ready(function()
-                            {
-                                var ctx = document.getElementById("mec_total_bookings_chart");
-                                var mecSellsChart = new Chart(ctx,
-                                {
-                                    type: "'.$chart.'",
-                                    data:
-                                    {
-                                        labels: ['.trim($labels, ', ').'],
-                                        datasets: [
-                                        {
-                                            label: "'.esc_js(sprintf(__('Total Sells (%s)', 'modern-events-calendar-lite'), $currency)).'",
-                                            data: ['.trim($stats, ', ').'],
-                                            backgroundColor: "rgba(159, 216, 255, 0.3)",
-                                            borderColor: "#36A2EB",
-                                            borderWidth: 1
-                                        }]
-                                    }
-                                });
-                            });
-                        </script>';
-                        ?>
+                        <div id="mec-total-booking-report">
+                            <?php
+                                $this->display_total_booking_chart($start,$end,$type,$chart);
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>

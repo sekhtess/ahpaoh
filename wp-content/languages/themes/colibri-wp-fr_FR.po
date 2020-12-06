@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Themes - Colibri WP package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-08-23 08:28:38+0000\n"
+"PO-Revision-Date: 2020-09-28 09:19:30+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: GlotPress/2.4.0-alpha\n"
+"X-Generator: GlotPress/3.0.0-alpha.2\n"
 "Language: fr\n"
 "Project-Id-Version: Themes - Colibri WP\n"
 
@@ -15,178 +15,214 @@ msgstr ""
 msgid "Colibri WP"
 msgstr "Colibri WP"
 
+#: admin/page.php:18
+msgid "Activating"
+msgstr "Activation"
+
+#: inc/template-functions.php:179
+msgid "Tag: %s"
+msgstr "Étiquette : %s"
+
+#: inc/translations.php:308
+msgid "Undefined sanitize function for control \"%s\""
+msgstr "Fonction d’assainissement non définie pour les « %s » de contrôle"
+
+#: template-parts/layout-wrapper-content/tags-container-1.php:9
+msgid "Tags:"
+msgstr "Étiquettes :"
+
+#: template-parts/layout-wrapper-content/categories-container-1.php:9
+msgid "Categories:"
+msgstr "Catégories :"
+
+#: template-parts/main/archive_item_template.php:87
+msgid "read more"
+msgstr "lire plus"
+
+#: inc/functions.php:159
+msgid "Woo Commerce left sidebar widget area"
+msgstr "Zone de widgets de colonne latérale WooCommerce"
+
+#. Template Name of the theme
+msgid "Landing Page Template"
+msgstr "Modèle de page d’atterrissage"
+
+#: inc/translations.php:256
+msgid "Colibri Settings"
+msgstr "Réglages de Colibri"
+
 #. translators: 1: plugin name, 2: action number 3: total number of actions.
-#: inc/class-tgm-plugin-activation.php:3662
+#: inc/class-tgm-plugin-activation.php:3665
 msgid "Installing Plugin %1$s (%2$d/%3$d)"
 msgstr "Installation de l’extension %1$s (%2$d/%3$d)"
 
-#: inc/class-tgm-plugin-activation.php:3659
+#: inc/class-tgm-plugin-activation.php:3662
 msgid "All installations have been completed."
 msgstr "Toutes les installations sont terminées."
 
 #. translators: 1: plugin name.
-#: inc/class-tgm-plugin-activation.php:3655
+#: inc/class-tgm-plugin-activation.php:3658
 msgid "%1$s installed successfully."
 msgstr "%1$s a bien été installé."
 
-#: inc/class-tgm-plugin-activation.php:3652
+#: inc/class-tgm-plugin-activation.php:3655
 msgid "The installation process is starting. This process may take a while on some hosts, so please be patient."
 msgstr "Le processus d’installation est lancé. Il peut prendre un certain temps chez certains hébergeurs, merci pour votre patience."
 
 #. translators: 1: plugin name, 2: action number 3: total number of actions.
-#: inc/class-tgm-plugin-activation.php:3648
+#: inc/class-tgm-plugin-activation.php:3651
 msgid "Installing and Activating Plugin %1$s (%2$d/%3$d)"
 msgstr "Installation et activation de l’extension %1$s (%2$d/%3$d)"
 
-#: inc/class-tgm-plugin-activation.php:3645
+#: inc/class-tgm-plugin-activation.php:3648
 msgid "All installations and activations have been completed."
 msgstr "Toutes les installations et activations sont terminées."
 
-#: inc/class-tgm-plugin-activation.php:3643
-#: inc/class-tgm-plugin-activation.php:3657
+#: inc/class-tgm-plugin-activation.php:3646
+#: inc/class-tgm-plugin-activation.php:3660
 msgid "Hide Details"
 msgstr "Masquer les détails"
 
-#: inc/class-tgm-plugin-activation.php:3642
-#: inc/class-tgm-plugin-activation.php:3656
+#: inc/class-tgm-plugin-activation.php:3645
+#: inc/class-tgm-plugin-activation.php:3659
 msgid "Show Details"
 msgstr "Afficher les détails"
 
 #. translators: 1: plugin name.
-#: inc/class-tgm-plugin-activation.php:3641
+#: inc/class-tgm-plugin-activation.php:3644
 msgid "%1$s installed and activated successfully."
 msgstr "%1$s a bien été installé et activé."
 
-#: inc/class-tgm-plugin-activation.php:3638
+#: inc/class-tgm-plugin-activation.php:3641
 msgid "The installation and activation process is starting. This process may take a while on some hosts, so please be patient."
 msgstr "Le processus d’installation et d’activation est lancé. Il peut prendre un certain temps chez certains hébergeurs, merci pour votre patience."
 
 #. translators: 1: plugin name.
-#: inc/class-tgm-plugin-activation.php:3633
+#: inc/class-tgm-plugin-activation.php:3636
 msgid "The installation of %1$s failed."
 msgstr "L’installation de %1$s a échoué."
 
 #. translators: 1: plugin name, 2: error message.
-#: inc/class-tgm-plugin-activation.php:3630
+#: inc/class-tgm-plugin-activation.php:3633
 msgid "An error occurred while installing %1$s: <strong>%2$s</strong>."
 msgstr "Une erreur est survenue pendant l’installation de %1$s : <strong>%2$s</strong>."
 
 #. translators: 1: plugin name, 2: action number 3: total number of actions.
-#: inc/class-tgm-plugin-activation.php:3626
+#: inc/class-tgm-plugin-activation.php:3629
 msgid "Updating Plugin %1$s (%2$d/%3$d)"
 msgstr "Mise à jour de l’extension %1$s (%2$d/%3$d)"
 
-#: inc/class-tgm-plugin-activation.php:3271
+#: inc/class-tgm-plugin-activation.php:3274
 msgid "Plugin activation failed."
 msgstr "Échec de l’activation de l’extension."
 
-#: inc/class-tgm-plugin-activation.php:3036
+#: inc/class-tgm-plugin-activation.php:3039
 msgid "No plugins are available to be activated at this time."
 msgstr "Aucune extension n'est prête à être activée pour le moment."
 
-#: inc/class-tgm-plugin-activation.php:3009
+#: inc/class-tgm-plugin-activation.php:3012
 msgid "No plugins were selected to be activated. No action taken."
 msgstr "Aucune extension n’a été sélectionnée pour être activée. Aucune action ne sera effectuée."
 
-#: inc/class-tgm-plugin-activation.php:2902
+#: inc/class-tgm-plugin-activation.php:2905
 msgid "No plugins are available to be updated at this time."
 msgstr "Aucune extension à mettre à jour pour le moment."
 
-#: inc/class-tgm-plugin-activation.php:2900
+#: inc/class-tgm-plugin-activation.php:2903
 msgid "No plugins are available to be installed at this time."
 msgstr "Aucune extension à installer disponible pour le moment."
 
-#: inc/class-tgm-plugin-activation.php:2859
+#: inc/class-tgm-plugin-activation.php:2862
 msgid "No plugins were selected to be updated. No action taken."
 msgstr "Aucune extension n’a été sélectionnée pour être mise à jour. Aucune action ne sera effectuée. "
 
-#: inc/class-tgm-plugin-activation.php:2857
+#: inc/class-tgm-plugin-activation.php:2860
 msgid "No plugins were selected to be installed. No action taken."
 msgstr "Aucune extension n’a été sélectionnée pour être installée. Aucune action ne sera effectuée."
 
-#: inc/class-tgm-plugin-activation.php:2823
+#: inc/class-tgm-plugin-activation.php:2826
 msgid "Update"
 msgstr "Mise à jour"
 
-#: inc/class-tgm-plugin-activation.php:2783
+#: inc/class-tgm-plugin-activation.php:2786
 msgid "Upgrade message from the plugin author:"
 msgstr "Message de mise à jour de l’auteur de l’extension :"
 
 #. translators: %2$s: plugin name in screen reader markup
-#: inc/class-tgm-plugin-activation.php:2709
+#: inc/class-tgm-plugin-activation.php:2712
 msgid "Activate %2$s"
 msgstr "Activer %2$s"
 
 #. translators: %2$s: plugin name in screen reader markup
-#: inc/class-tgm-plugin-activation.php:2703
+#: inc/class-tgm-plugin-activation.php:2706
 msgid "Update %2$s"
 msgstr "Mettre à jour %2$s"
 
 #. translators: %2$s: plugin name in screen reader markup
-#: inc/class-tgm-plugin-activation.php:2698
+#: inc/class-tgm-plugin-activation.php:2701
 msgid "Install %2$s"
 msgstr "Installer %2$s"
 
-#: inc/class-tgm-plugin-activation.php:2648
+#: inc/class-tgm-plugin-activation.php:2651
 msgid "Status"
 msgstr "État"
 
-#: inc/class-tgm-plugin-activation.php:2647
+#: inc/class-tgm-plugin-activation.php:2650
 msgid "Version"
 msgstr "Version"
 
-#: inc/class-tgm-plugin-activation.php:2642
+#: inc/class-tgm-plugin-activation.php:2645
 msgid "Source"
 msgstr "Adresse web source"
 
-#: inc/class-tgm-plugin-activation.php:2641
+#: inc/class-tgm-plugin-activation.php:2644
 msgid "Plugin"
 msgstr "Extension"
 
-#: inc/class-tgm-plugin-activation.php:2625
+#: inc/class-tgm-plugin-activation.php:2628
 msgid "No plugins to install, update or activate."
 msgstr "Aucune extension à installer ou à activer."
 
-#: inc/class-tgm-plugin-activation.php:2601
+#: inc/class-tgm-plugin-activation.php:2604
 msgid "Available version:"
 msgstr "Version disponible :"
 
-#: inc/class-tgm-plugin-activation.php:2587
+#: inc/class-tgm-plugin-activation.php:2590
 msgid "Minimum required version:"
 msgstr "Version minimale requise :"
 
-#: inc/class-tgm-plugin-activation.php:2578
+#: inc/class-tgm-plugin-activation.php:2581
 msgid "Installed version:"
 msgstr "Version installée :"
 
-#: inc/class-tgm-plugin-activation.php:2569
+#: inc/class-tgm-plugin-activation.php:2572
 msgctxt "as in: \"version nr unknown\""
 msgid "unknown"
 msgstr "inconnu"
 
 #. translators: 1: number of plugins.
-#: inc/class-tgm-plugin-activation.php:2482
+#: inc/class-tgm-plugin-activation.php:2485
 msgid "To Activate <span class=\"count\">(%s)</span>"
 msgid_plural "To Activate <span class=\"count\">(%s)</span>"
 msgstr[0] "<span class=\"count\">(%s)</span> à activer"
 msgstr[1] "<span class=\"count\">(%s)</span> à activer"
 
 #. translators: 1: number of plugins.
-#: inc/class-tgm-plugin-activation.php:2477
+#: inc/class-tgm-plugin-activation.php:2480
 msgid "Update Available <span class=\"count\">(%s)</span>"
 msgid_plural "Update Available <span class=\"count\">(%s)</span>"
 msgstr[0] "<span class=\"count\">(%s)</span> mise à jour disponible  "
 msgstr[1] "<span class=\"count\">(%s)</span> mises à jour disponibles  "
 
 #. translators: 1: number of plugins.
-#: inc/class-tgm-plugin-activation.php:2472
+#: inc/class-tgm-plugin-activation.php:2475
 msgid "To Install <span class=\"count\">(%s)</span>"
 msgid_plural "To Install <span class=\"count\">(%s)</span>"
 msgstr[0] "<span class=\"count\">(%s)</span> à installer"
 msgstr[1] "<span class=\"count\">(%s)</span> à installer"
 
 #. translators: 1: number of plugins.
-#: inc/class-tgm-plugin-activation.php:2467
+#: inc/class-tgm-plugin-activation.php:2470
 msgctxt "plugins"
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
@@ -194,58 +230,58 @@ msgstr[0] "Tous <span class=\"count\">(%s)</span>"
 msgstr[1] "Tous <span class=\"count\">(%s)</span>"
 
 #. translators: 1: install status, 2: update status
-#: inc/class-tgm-plugin-activation.php:2420
+#: inc/class-tgm-plugin-activation.php:2423
 msgctxt "Install/Update Status"
 msgid "%1$s, %2$s"
 msgstr "%1$s, %2$s"
 
-#: inc/class-tgm-plugin-activation.php:2411
+#: inc/class-tgm-plugin-activation.php:2414
 msgid "Update recommended"
 msgstr "Mise à jour recommandée"
 
-#: inc/class-tgm-plugin-activation.php:2408
+#: inc/class-tgm-plugin-activation.php:2411
 msgid "Requires Update"
 msgstr "Mise à jour nécessaire"
 
-#: inc/class-tgm-plugin-activation.php:2405
+#: inc/class-tgm-plugin-activation.php:2408
 msgid "Required Update not Available"
 msgstr "Mise à jour nécessaire non disponible"
 
-#: inc/class-tgm-plugin-activation.php:2397
+#: inc/class-tgm-plugin-activation.php:2400
 msgid "Installed But Not Activated"
 msgstr "Installée mais non activée"
 
-#: inc/class-tgm-plugin-activation.php:2393
+#: inc/class-tgm-plugin-activation.php:2396
 msgid "Not Installed"
 msgstr "Non installée"
 
-#: inc/class-tgm-plugin-activation.php:2375
+#: inc/class-tgm-plugin-activation.php:2378
 msgid "Pre-Packaged"
 msgstr "Pré-packagée"
 
-#: inc/class-tgm-plugin-activation.php:2372
+#: inc/class-tgm-plugin-activation.php:2375
 msgid "External Source"
 msgstr "Source tierce"
 
-#: inc/class-tgm-plugin-activation.php:2369
+#: inc/class-tgm-plugin-activation.php:2372
 msgid "WordPress Repository"
 msgstr "Dépôt WordPress"
 
-#: inc/class-tgm-plugin-activation.php:2352
+#: inc/class-tgm-plugin-activation.php:2355
 msgid "Recommended"
 msgstr "Recommandé"
 
-#: inc/class-tgm-plugin-activation.php:2349
+#: inc/class-tgm-plugin-activation.php:2352
 msgid "Required"
 msgstr "Nécessaire"
 
 #. translators: %s: version number
-#: inc/class-tgm-plugin-activation.php:2051
+#: inc/class-tgm-plugin-activation.php:2054
 msgid "TGMPA v%s"
 msgstr "TGMPA v%s"
 
 #: inc/class-tgm-plugin-activation.php:1152
-#: inc/class-tgm-plugin-activation.php:3052
+#: inc/class-tgm-plugin-activation.php:3055
 msgctxt "plugin A *and* plugin B"
 msgid "and"
 msgstr "et"
@@ -299,21 +335,21 @@ msgid "No action taken. Plugin %1$s was already active."
 msgstr "Aucune action effectuée. L’extension %1$s était déjà activée."
 
 #: inc/class-tgm-plugin-activation.php:390
-#: inc/class-tgm-plugin-activation.php:3057
+#: inc/class-tgm-plugin-activation.php:3060
 msgid "The following plugin was activated successfully:"
 msgid_plural "The following plugins were activated successfully:"
 msgstr[0] "L’extension suivante a bien été activée :"
 msgstr[1] "Les extensions suivantes ont bien été activées :"
 
 #: inc/class-tgm-plugin-activation.php:389
-#: inc/class-tgm-plugin-activation.php:3272
+#: inc/class-tgm-plugin-activation.php:3275
 msgid "Plugin activated successfully."
 msgstr "L’extension a bien été activée."
 
 #: inc/class-tgm-plugin-activation.php:388
 #: inc/class-tgm-plugin-activation.php:843
-#: inc/class-tgm-plugin-activation.php:2626
-#: inc/class-tgm-plugin-activation.php:3725
+#: inc/class-tgm-plugin-activation.php:2629
+#: inc/class-tgm-plugin-activation.php:3728
 msgid "Return to the Dashboard"
 msgstr "Retour au tableau de bord"
 
@@ -423,7 +459,7 @@ msgstr "Choisir une conception d’en-tête"
 msgid "Skip to content"
 msgstr "Aller au contenu"
 
-#: inc/class-tgm-plugin-activation.php:2399 inc/translations.php:300
+#: inc/class-tgm-plugin-activation.php:2402 inc/translations.php:300
 msgid "Active"
 msgstr "Actif"
 
@@ -435,11 +471,11 @@ msgstr "Activation de %s"
 msgid "Installing %s"
 msgstr "Installation de %s"
 
-#: inc/class-tgm-plugin-activation.php:2817 inc/translations.php:297
+#: inc/class-tgm-plugin-activation.php:2820 inc/translations.php:297
 msgid "Install"
 msgstr "Installer"
 
-#: inc/class-tgm-plugin-activation.php:2826 inc/translations.php:296
+#: inc/class-tgm-plugin-activation.php:2829 inc/translations.php:296
 msgid "Activate"
 msgstr "Activer"
 
@@ -851,7 +887,7 @@ msgstr "Largeur"
 msgid "Border"
 msgstr "Bordure"
 
-#: inc/class-tgm-plugin-activation.php:2643 inc/translations.php:151
+#: inc/class-tgm-plugin-activation.php:2646 inc/translations.php:151
 msgid "Type"
 msgstr "Type"
 
@@ -1383,15 +1419,15 @@ msgstr "Menu du pied de page"
 msgid "Header Menu"
 msgstr "Menu d’en-tête"
 
-#: inc/template-functions.php:395
+#: inc/template-functions.php:421
 msgid "Built using WordPress and %s"
 msgstr "Construit avec WordPress et %s"
 
-#: inc/template-functions.php:202
+#: inc/template-functions.php:206
 msgid "Post navigation"
 msgstr "Navigation de l’article"
 
-#: inc/template-functions.php:183
+#: inc/template-functions.php:187
 msgid "No Tag"
 msgstr "Aucune étiquette"
 
@@ -1443,31 +1479,31 @@ msgstr "Construit avec WordPress et le thème %s"
 msgid "Colibri Theme"
 msgstr "Thème Colibri"
 
-#: inc/template-functions.php:274 inc/src/View.php:174
+#: inc/template-functions.php:278 inc/src/View.php:188
 msgid "Posts navigation"
 msgstr "Navigation des articles"
 
-#: inc/src/View.php:173 inc/src/View.php:181
+#: inc/src/View.php:187 inc/src/View.php:195
 msgid "<i class=\"fa fa-angle-right\" aria-hidden=\"true\"></i>"
 msgstr "<i class=\"fa fa-angle-right\" aria-hidden=\"true\"></i>"
 
-#: inc/src/View.php:172 inc/src/View.php:179
+#: inc/src/View.php:186 inc/src/View.php:193
 msgid "<i class=\"fa fa-angle-left\" aria-hidden=\"true\"></i>"
 msgstr "<i class=\"fa fa-angle-left\" aria-hidden=\"true\"></i>"
 
-#: comments.php:34
+#: comments.php:33
 msgid "Newer Comments <i class=\"font-icon-post fa fa-angle-double-right\"></i>"
 msgstr "Commentaires plus récents <i class=\"font-icon-post fa fa-angle-double-right\"></i>"
 
-#: comments.php:30
+#: comments.php:29
 msgid "<i class=\"font-icon-post fa fa-angle-double-left\"></i> Older Comments"
 msgstr "<i class=\"font-icon-post fa fa-angle-double-left\"></i> Commentaires plus anciens"
 
-#: comments.php:12
+#: comments.php:11
 msgid "One Response"
 msgstr "Une réponse"
 
-#: comments.php:12
+#: comments.php:11
 msgid "No Responses"
 msgstr "Aucune réponse"
 
@@ -1491,11 +1527,11 @@ msgstr "Vous devez mettre à niveau votre version de PHP afin de pouvoir utilise
 msgid "Colibri theme activation failed!"
 msgstr "L’activation du thème Colibri a échouée."
 
-#: template-parts/main/404.php:22
+#: template-parts/main/404.php:28
 msgid "Go to Homepage!"
 msgstr "Aller à la page d’accueil !"
 
-#: template-parts/main/404.php:13
+#: template-parts/main/404.php:17
 msgid "Sorry, page not found!"
 msgstr "Désolé, page non trouvée !"
 
@@ -1524,9 +1560,9 @@ msgstr "{COMMENTS-COUNT} réponses"
 msgid "Read more"
 msgstr "Lire la suite"
 
+#: inc/translations.php:7
 #: template-parts/layout-wrapper-content/navigation-container-2.php:37
 #: template-parts/main/search.php:27 template-parts/main/search.php:53
-#: inc/translations.php:7
 msgid "Back"
 msgstr "Précédent"
 
@@ -1558,9 +1594,9 @@ msgstr "Article suivant :"
 msgid "Next:"
 msgstr "Suivant :"
 
+#: inc/template-functions.php:273 inc/src/View.php:184
 #: template-parts/content/content-single.php:26
-#: template-parts/content/content-page.php:10 inc/template-functions.php:269
-#: inc/src/View.php:170
+#: template-parts/content/content-page.php:10
 msgid "Page"
 msgstr "Page"
 
@@ -1585,7 +1621,7 @@ msgstr "Prêt·e à publier votre premier article ? <a href=\"%1$s\">Lancez-vous
 msgid "Nothing Found"
 msgstr "Rien n’a été trouvé"
 
-#: template-parts/blog/comments.php:37 comments.php:46
+#: comments.php:42 template-parts/blog/comments.php:37
 msgid "Comments are closed."
 msgstr "Les commentaires sont fermés."
 
@@ -1597,15 +1633,15 @@ msgstr "Commentaires plus récents"
 msgid "Older Comments"
 msgstr "Commentaires plus anciens"
 
-#: template-parts/blog/comments.php:14 comments.php:13
+#: comments.php:12 template-parts/blog/comments.php:14
 msgid "% Responses"
 msgstr "% réponses"
 
-#: template-parts/main/post.php:22 template-parts/blog/comments.php:13
+#: template-parts/blog/comments.php:13 template-parts/main/post.php:22
 msgid "One response"
 msgstr "Une réponse"
 
-#: template-parts/main/post.php:21 template-parts/blog/comments.php:12
+#: template-parts/blog/comments.php:12 template-parts/main/post.php:21
 msgid "No responses yet"
 msgstr "Aucune réponse pour l’instant"
 

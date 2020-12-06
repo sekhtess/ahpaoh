@@ -17,6 +17,7 @@ class MEC_user extends MEC_base
      * @var MEC_db
      */
     public $db;
+
     public $settings;
 
     /**
@@ -128,7 +129,7 @@ class MEC_user extends MEC_base
 
     public function mec($id)
     {
-        $data = $this->db->select("SELECT * FROM `#__mec_users` WHERE `id`='".((int) $id)."'", 'loadObject');
+        $data = $this->db->select("SELECT * FROM `#__mec_users` WHERE `id`=".((int) $id), 'loadObject');
         if(!$data) return NULL;
 
         $user = new stdClass();

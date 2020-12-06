@@ -72,6 +72,8 @@ define( 'NONCE_SALT',       'LQTzuqFoShNKpGHMqg8EvZEswaeBcgqmx1fdxUtnXZaj8GDiSWU
  */
 $table_prefix = 'wp_';
 
+define( 'DISALLOW_FILE_EDIT', true );
+
 /**
  * For developers: WordPress debugging mode.
  *

@@ -361,12 +361,11 @@ jQuery(document).ready(function($)
             });
         }
 
-        function initYearNavigator() {
-            // Remove the onclick event
-            $("#mec_skin_" + settings.id + " .mec-load-year").off("click");
-
+        function initYearNavigator()
+        {
             // Add onclick event
-            $("#mec_skin_" + settings.id + " .mec-load-year").on("click", function () {
+            $("#mec_skin_" + settings.id + " .mec-load-year").off("click").on("click", function()
+            {
                 var year = $(this).data("mec-year");
                 setYear(year);
             });
@@ -487,6 +486,42 @@ jQuery(document).ready(function($)
             if (settings.sed_method != '0') {
                 sed();
             }
+
+            // Yearly view
+            $("#mec_skin_" + settings.id + " .mec-has-event a").on('click', function(e)
+            {
+                e.preventDefault();
+
+                var des = $(this).attr('href');
+                var visible = $(des).is(':visible');
+                if(!visible)
+                {
+                    var year = $(des).parent().parent().parent().data('year-id');
+                    while(!visible)
+                    {
+                        loadMoreButton(year);
+
+                        visible = $(des).is(':visible');
+                    }
+                }
+
+                $('.mec-events-agenda').removeClass('mec-selected');
+                $(des).closest('.mec-events-agenda').addClass('mec-selected');
+
+                var scrollTopVal = $(des).closest('.mec-events-agenda').offset().top - 35;
+                if($(this).closest('.mec-fluent-wrap').length > 0)
+                {
+                    var parent = jQuery(this).closest('.mec-fluent-wrap').find('.mec-yearly-agenda-sec');
+                    scrollTopVal = parent.scrollTop() + ($(des).closest('.mec-events-agenda').offset().top - parent.offset().top);
+                    jQuery(this).closest('.mec-fluent-wrap').find('.mec-yearly-agenda-sec').getNiceScroll(0).doScrollTop(scrollTopVal - 15, 120);
+                }
+                else
+                {
+                    $('html, body').animate({
+                        scrollTop: scrollTopVal
+                    }, 300);
+                }
+            });
         }
 
         function sed() {
@@ -1528,7 +1563,7 @@ jQuery(document).ready(function($)
 
             // Show related events
             $('#mec_skin_' + settings.id + ' .mec-weekly-view-date-events').addClass('mec-util-hidden');
-            $('#mec_weekly_view_date_events' + settings.id + '_' + day).removeClass('mec-util-hidden');
+            $('.mec_weekly_view_date_events' + settings.id + '_' + day).removeClass('mec-util-hidden').show();
         }
 
         function initMonthNavigator(month_id) {
@@ -2912,6 +2947,8 @@ jQuery(document).ready(function($)
             ajax_url: '',
             sf: {},
             items: 3,
+            loop: true,
+            autoplay_status: true,
             autoplay: '',
             style: 'type1',
             start_date: ''
@@ -2939,9 +2976,9 @@ jQuery(document).ready(function($)
                 var owl = $("#mec_skin_" + settings.id + " .mec-event-carousel-type1 .mec-owl-carousel");
 
                 owl.owlCarousel({
-                    autoplay: true,
+                    autoplay: settings.autoplay_status,
                     autoplayTimeout: settings.autoplay, // Set AutoPlay to 3 seconds
-                    loop: true,
+                    loop: settings.loop,
                     items: settings.items,
                     responsiveClass: true,
                     responsive: {
@@ -2968,8 +3005,8 @@ jQuery(document).ready(function($)
                 );
             } else if (settings.style === 'type4') {
                 $("#mec_skin_" + settings.id + " .mec-owl-carousel").owlCarousel({
-                    autoplay: true,
-                    loop: true,
+                    autoplay: settings.autoplay_status,
+                    loop: settings.loop,
                     autoplayTimeout: settings.autoplay,
                     items: settings.items,
                     dots: false,
@@ -2999,8 +3036,8 @@ jQuery(document).ready(function($)
                 );
             } else {
                 $("#mec_skin_" + settings.id + " .mec-owl-carousel").owlCarousel({
-                    autoplay: true,
-                    loop: true,
+                    autoplay: settings.autoplay_status,
+                    loop: settings.loop,
                     autoplayTimeout: settings.autoplay,
                     items: settings.items,
                     dots: typeof settings.dots_navigation != 'undefined' ? settings.dots_navigation : false,
@@ -3383,6 +3420,20 @@ jQuery(document).ready(function($)
                 loadMore();
             });
 
+            $("#mec_skin_" + settings.id + " article").off("click").on("click", function(e)
+            {
+                // Link Clicked
+                if(e.target.nodeName.toLowerCase() === 'a') return;
+
+                var href = $(this).data('href');
+                if(!href) return;
+
+                var target = $(this).data('target');
+
+                if(target === 'blank') window.open(href, '_blank');
+                else document.location.href = href;
+            });
+
             // Add the onclick event
             $("#mec_skin_" + settings.id + " .mec-has-event").off("click").on('click', function(e)
             {
@@ -3674,26 +3725,6 @@ function mec_focus_week(id, skin) {
                 }
             }
         }
-
-        // Yearly view
-        $('.mec-yearly-calendar .mec-has-event a').on('click', function(e) {
-            e.preventDefault();
-            var des = $(this).attr('href');
-            $('.mec-events-agenda').removeClass('mec-selected');
-            $(des).closest('.mec-events-agenda').addClass('mec-selected');
-            var scrollTopVal = $(des).closest('.mec-events-agenda').offset().top - 35;
-
-            if ($(this).closest('.mec-fluent-wrap').length > 0) {
-                var parent = jQuery(this).closest('.mec-fluent-wrap').find('.mec-yearly-agenda-sec');
-                scrollTopVal = parent.scrollTop() + ($(des).closest('.mec-events-agenda').offset().top - parent.offset().top);
-                jQuery(this).closest('.mec-fluent-wrap').find('.mec-yearly-agenda-sec').getNiceScroll(0).doScrollTop(scrollTopVal - 15, 120);
-            } else {
-                $('html, body').animate({
-                    scrollTop: scrollTopVal
-                }, 300);    
-            }
-        });
-
     });
 })(jQuery);
 
@@ -3851,10 +3882,10 @@ function mec_book_form_back_btn_cache(context, unique_id)
 
 function mec_agreement_change(context)
 {
-    var status = jQuery(context).is(":checked") ? true : false;
+    var status = jQuery(context).is(":checked");
     
-    if(status) jQuery(context).attr("checked", "checked");
-    else jQuery(context).removeAttr("checked");
+    if(status) jQuery(context).prop("checked", "checked");
+    else jQuery(context).removeProp("checked");
 }
 
 function mec_book_form_back_btn_click(context, unique_id)
@@ -3882,6 +3913,12 @@ function mec_book_form_back_btn_click(context, unique_id)
                 sitekey: mecdata.recapcha_key
             });
         }
+
+        var event_id = jQuery('input[name="event_id"]').val();
+        var date = jQuery('#mec_book_form_date'+unique_id).val();
+
+        // Update Availability
+        window['mec_get_tickets_availability'+unique_id](event_id, date);
     }
     else if(id == "mec-book-form-back-btn-step-3")
     {

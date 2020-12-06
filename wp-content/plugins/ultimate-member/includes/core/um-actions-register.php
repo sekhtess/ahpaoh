@@ -206,6 +206,8 @@ function um_check_user_status( $user_id, $args ) {
 				exit( wp_safe_redirect( urldecode( $args['redirect_to'] ) ) );
 			}
 
+			um_fetch_user( $user_id );
+
 			if ( um_user( 'auto_approve_act' ) == 'redirect_url' && um_user( 'auto_approve_url' ) !== '' ) {
 				exit( wp_redirect( um_user( 'auto_approve_url' ) ) );
 			}
@@ -378,6 +380,10 @@ function um_submit_form_register( $args ) {
 		'user_password' => $user_password,
 		'user_email'    => trim( $user_email ),
 	);
+
+	if ( ! empty( $args['submitted'] ) ) {
+		$args['submitted'] = array_diff_key( $args['submitted'], array_flip( UM()->user()->banned_keys ) );
+	}
 
 	$args['submitted'] = array_merge( $args['submitted'], $credentials );
 	$args = array_merge( $args, $credentials );

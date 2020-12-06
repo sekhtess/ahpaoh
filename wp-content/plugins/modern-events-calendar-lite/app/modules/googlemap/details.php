@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var MEC_Main $this */
+
 // PRO Version is required
 if(!$this->getPRO()) return;
 
@@ -59,14 +61,14 @@ $map_data->atts = array(
     'location_center_long'=>null,
     'use_orig_map' => true
 );
+
 $map_data->events =  $this->get_rendered_events(array('post__in'=>array($event->ID)));
 $map_data->render = $render;
 $map_data->geolocation = '0';
 $map_data->sf_status = null;
 
-$current_event = [$map_data->events[$event->ID]];
-$events = apply_filters('mec_location_load_additional', $current_event, $additional_location_ids, $event_locations);
-$map_data->events = $events;
+$current_event = (isset($map_data->events[$event->ID]) ? array($map_data->events[$event->ID]) : array());
+$map_data->events = apply_filters('mec_location_load_additional', $current_event, $additional_location_ids, $event_locations);
 
 // Initialize MEC Google Maps jQuery plugin
 $javascript = '<script type="text/javascript">
@@ -81,6 +83,7 @@ jQuery(document).ready(function()
         zoom: '.(isset($settings['google_maps_zoomlevel']) ? $settings['google_maps_zoomlevel'] : 14).',
         icon: "'.apply_filters('mec_marker_icon', $this->asset('img/m-04.png')).'",
         styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->get_googlemap_style($settings['google_maps_style']) : "''").',
+        fullscreen_button: '.((isset($settings['google_maps_fullscreen_button']) and trim($settings['google_maps_fullscreen_button'])) ? 'true' : 'false').',
         markers: '.json_encode($render->markers($map_data->events)).',
         clustering_images: "'.$this->asset('img/cluster1/m').'",
         getDirection: '.$get_direction.',

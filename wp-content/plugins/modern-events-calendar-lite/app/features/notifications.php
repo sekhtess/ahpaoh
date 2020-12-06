@@ -108,6 +108,9 @@ class MEC_feature_notifications extends MEC_base
                 <li><span>%%event_organizer_name%%</span>: <?php _e('Organizer name of booked event', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_organizer_tel%%</span>: <?php _e('Organizer tel of booked event', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_organizer_email%%</span>: <?php _e('Organizer email of booked event', 'modern-events-calendar-lite'); ?></li>
+                <li><span>%%event_other_organizers_name%%</span>: <?php _e('Additional organizers name of booked event', 'modern-events-calendar-lite'); ?></li>
+                <li><span>%%event_other_organizers_tel%%</span>: <?php _e('Additional organizers tel of booked event', 'modern-events-calendar-lite'); ?></li>
+                <li><span>%%event_other_organizers_email%%</span>: <?php _e('Additional organizers email of booked event', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_location_name%%</span>: <?php _e('Location name of booked event', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_location_address%%</span>: <?php _e('Location address of booked event', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_other_locations_name%%</span>: <?php _e('Additional locations name of booked event', 'modern-events-calendar-lite'); ?></li>
@@ -125,12 +128,14 @@ class MEC_feature_notifications extends MEC_base
                 <li><span>%%ticket_name%%</span>: <?php _e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%ticket_time%%</span>: <?php _e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%ticket_name_time%%</span>: <?php _e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
+                <li><span>%%ticket_private_description%%</span>: <?php _e('Ticket private description', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%payment_gateway%%</span>: <?php _e('Payment Gateway', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%dl_file%%</span>: <?php _e('Link to the downloadable file', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%google_calendar_link%%</span>: <?php _e('Add to Google Calendar', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%google_calendar_link_next_occurrences%%</span>: <?php _e('Add to Google Calendar Links for next 20 occurrences', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_start_date%%</span>: <?php _e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_end_date%%</span>: <?php _e('Event End Date', 'modern-events-calendar-lite'); ?></li>
+                <li><span>%%event_timezone%%</span>: <?php _e('Event Timezone', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_status%%</span>: <?php _e('Status of event', 'modern-events-calendar-lite'); ?></li>
                 <li><span>%%event_note%%</span>: <?php _e('Event Note', 'modern-events-calendar-lite'); ?></li>
                 <?php do_action('mec_extra_field_notifications'); ?>
@@ -142,23 +147,29 @@ class MEC_feature_notifications extends MEC_base
     public function get_notifications()
     {
         return array(
-            'email_verification' => array(
-                'label' => __('Email Verification', 'modern-events-calendar-lite')
-            ),
             'booking_notification' => array(
                 'label' => __('Booking Notification', 'modern-events-calendar-lite')
             ),
             'booking_confirmation' => array(
                 'label' => __('Booking Confirmation', 'modern-events-calendar-lite')
             ),
+            'booking_rejection' => array(
+                'label' => __('Booking Rejection', 'modern-events-calendar-lite')
+            ),
+            'email_verification' => array(
+                'label' => __('Email Verification', 'modern-events-calendar-lite')
+            ),
             'cancellation_notification' => array(
                 'label' => __('Booking Cancellation', 'modern-events-calendar-lite')
             ),
-            'admin_notification' => array(
-                'label' => __('Admin Notification', 'modern-events-calendar-lite')
-            ),
             'booking_reminder' => array(
                 'label' => __('Booking Reminder', 'modern-events-calendar-lite')
+            ),
+            'event_soldout' => array(
+                'label' => __('Event Soldout', 'modern-events-calendar-lite')
+            ),
+            'admin_notification' => array(
+                'label' => __('Admin Notification', 'modern-events-calendar-lite')
             ),
         );
     }
