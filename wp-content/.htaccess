@@ -1,0 +1,5 @@
+## WP Defender - Protect PHP Executed ##
+<Files *.php>
+Require all denied
+</Files>
+## WP Defender - End ##
