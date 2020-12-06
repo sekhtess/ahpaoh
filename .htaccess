@@ -28,4 +28,14 @@ Require all granted
 Require all granted
 </Files>
 
+<Files wp-config.php>
+ order allow,deny
+ deny from all
+</Files>
+
+Options All -Indexes
+<Files .htaccess>
+ order allow,deny 
+ deny from all 
+</Files>
 ## WP Defender - End ##
